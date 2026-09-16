@@ -31,9 +31,10 @@ export default function CustomerBookings() {
   }, [bookings, user?.id]);
 
   const filtered = useMemo(() => {
-    if (tab === 'upcoming') return myBookings.filter((b) => ['requested', 'confirmed', 'inProgress'].includes(b.status));
-    if (tab === 'completed') return myBookings.filter((b) => b.status === 'completed');
-    return myBookings.filter((b) => b.status === 'cancelled');
+    const uniqueBookings = [...new Map(myBookings.map((booking) => [booking.id, booking])).values()];
+    if (tab === 'upcoming') return uniqueBookings.filter((b) => ['requested', 'confirmed', 'inProgress'].includes(b.status));
+    if (tab === 'completed') return uniqueBookings.filter((b) => b.status === 'completed');
+    return uniqueBookings.filter((b) => b.status === 'cancelled');
   }, [myBookings, tab]);
 
   return (

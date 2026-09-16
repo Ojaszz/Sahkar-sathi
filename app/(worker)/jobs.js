@@ -93,7 +93,7 @@ export default function WorkerJobs() {
       }
       return;
     }
-    await setStatus(b.id, 'confirmed');
+    await setStatus(b.id, 'inProgress');
   };
   const reject = async (b) => {
     // Reject = THIS worker passing on the request. The shared booking stays
@@ -175,7 +175,7 @@ function JobCard({ booking, myService, declined, onPress, onAccept, onReject }) 
             ) : null}
           </View>
           <Text style={[typography.caption, { color: colors.textSecondary }]}>
-            {t(`categories.${booking.service}`)} • {booking.time === 'ASAP' ? t('workerApp.newRequest') : `${formatDate(booking.date)} • ${booking.time}`}
+            {t(`categories.${booking.service}`)} • {booking.hours || 1} {t('booking.hours')} • {booking.time === 'ASAP' ? t('workerApp.newRequest') : `${formatDate(booking.date)} • ${booking.time}`}
           </Text>
         </View>
         <StatusBadge status={booking.status} label={t(`booking.status.${booking.status}`)} />

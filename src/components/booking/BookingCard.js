@@ -30,7 +30,7 @@ export default function BookingCard({ booking }) {
             {t(`categories.${booking.service}`)}
           </Text>
           <Text style={[typography.small, { color: colors.textMuted }]}>
-            {formatDate(booking.date)} • {booking.time}
+            {formatDate(booking.date)} • {booking.time} • {booking.hours || 1} {t('booking.hours')}
           </Text>
         </View>
         <StatusBadge status={booking.status} label={t(`booking.status.${booking.status}`)} />

@@ -32,6 +32,8 @@ export default function NewBookingScreen() {
     return d.toISOString().slice(0, 10);
   });
   const [time, setTime] = useState('10:00 AM');
+  // How many hours the job is expected to take (1–8, scales the price).
+  const [hours, setHours] = useState(2);
   const [issue, setIssue] = useState('');
   // Service address = area menu (+ auto pincode) + optional door/premise line.
   const [area, setArea] = useState('FC Road');
@@ -52,7 +54,6 @@ export default function NewBookingScreen() {
   );
 
   const dates = useMemo(() => {
-  const styles = makeStyles(colors);
     // next 5 days starting tomorrow
     const days = [];
     const now = new Date();
@@ -64,11 +65,13 @@ export default function NewBookingScreen() {
     return days.map((d) => ({ iso: d.toISOString().slice(0, 10), label: d.toLocaleDateString('en-IN', { weekday: 'short' }) + ', ' + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) }));
   }, []);
 
-  const coopFee = Math.round(worker.price * 0.08);
-  const total = worker.price + coopFee;
+  // Price scales with hours: rate × hours, then an 8% coop fee on top.
+  const rate = worker.price;
+  const base = rate * hours;
+  const coopFee = Math.round(base * 0.08);
+  const total = base + coopFee;
 
   const confirm = async () => {
-  const styles = makeStyles(colors);
     if (!worker.available) {
       Alert.alert(t('home.offline'), t('bookings.workerOffline'));
       return;
@@ -80,7 +83,8 @@ export default function NewBookingScreen() {
       service: worker.service,
       date,
       time,
-      amount: worker.price,
+      hours,
+      amount: base,
       issue: issue.trim() || `${t(`categories.${worker.service}`)} service`,
       address,
     });
@@ -132,6 +136,38 @@ export default function NewBookingScreen() {
         ))}
       </View>
 
+      {/* Duration: how many hours the job will take */}
+      <Text style={[typography.h3, styles.label]}>{t('booking.selectHours')}</Text>
+      <Card style={styles.hoursCard}>
+        <View style={styles.hoursMeta}>
+          <Text style={[typography.bodyBold, { color: colors.text }]}>
+            {t('booking.hourlyRate')} {formatINR(rate)}
+          </Text>
+          <Text style={[typography.caption, { color: colors.textSecondary }]}>
+            {t('booking.basePrice')} at {hours} {t('booking.hours')} = {formatINR(base)}
+          </Text>
+        </View>
+        <View style={styles.stepper}>
+          <Pressable
+            style={[styles.stepBtn, hours <= 1 && styles.stepBtnDisabled]}
+            onPress={() => setHours((h) => Math.max(1, h - 1))}
+            disabled={hours <= 1}
+            hitSlop={8}
+          >
+            <MaterialCommunityIcons name="minus" size={20} color={hours <= 1 ? colors.textMuted : colors.text} />
+          </Pressable>
+          <Text style={[typography.h2, { color: colors.text, minWidth: 44, textAlign: 'center' }]}>{hours}</Text>
+          <Pressable
+            style={[styles.stepBtn, hours >= 8 && styles.stepBtnDisabled]}
+            onPress={() => setHours((h) => Math.min(8, h + 1))}
+            disabled={hours >= 8}
+            hitSlop={8}
+          >
+            <MaterialCommunityIcons name="plus" size={20} color={hours >= 8 ? colors.textMuted : colors.text} />
+          </Pressable>
+        </View>
+      </Card>
+
       <Input
         label={t('booking.describeIssue')}
         value={issue}
@@ -162,7 +198,8 @@ export default function NewBookingScreen() {
       {/* Price summary */}
       <Text style={[typography.h3, styles.label]}>{t('booking.priceSummary')}</Text>
       <Card>
-        <Row label={t('booking.basePrice')} value={formatINR(worker.price)} />
+        <Row label={`${t('booking.hourlyRate')} · ${hours} ${t('booking.hours')}`} value={formatINR(base)} />
+        <Row label={t('booking.basePrice')} value={formatINR(rate)} muted />
         <Row label={t('booking.coopFee')} value={`+ ${formatINR(coopFee)}`} muted note={t('booking.coopFeeShort')} />
         <View style={styles.divider} />
         <Row label={t('booking.estimatedTotal')} value={formatINR(total)} bold />
@@ -235,6 +272,25 @@ const makeStyles = (colors) => StyleSheet.create({
     paddingVertical: spacing.sm + 2,
   },
   timeChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  hoursCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  hoursMeta: { flex: 1, gap: 2 },
+  stepper: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  stepBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepBtnDisabled: { opacity: 0.4 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm },
   divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
   callout: { marginTop: spacing.lg },

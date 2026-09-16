@@ -57,7 +57,7 @@ export const api = {
   async listBookings() {
     return [...bookings];
   },
-  async createBooking({ customerId, customerName, workerId, service, date, time, amount, issue, address }) {
+  async createBooking({ customerId, customerName, workerId, service, date, time, amount, hours, issue, address }) {
     const b = {
       id: id('b'),
       customerId,
@@ -66,6 +66,7 @@ export const api = {
       service,
       date,
       time,
+      hours: hours || 1,
       amount,
       status: 'requested',
       payment: 'pending',

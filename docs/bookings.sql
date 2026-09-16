@@ -27,6 +27,9 @@ create table if not exists bookings (
 alter table bookings add column if not exists date text;
 alter table bookings add column if not exists time text;
 
+-- hours = how long the job is expected to take; the amount is hourly rate × hours.
+alter table bookings add column if not exists hours integer default 1;
+
 -- Row Level Security: wide open to anon (same pattern as messages / tag_alongs).
 -- Demo-grade — 4 phones + anon key must work without auth complexity.
 alter table bookings enable row level security;

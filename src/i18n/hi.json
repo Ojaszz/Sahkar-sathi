@@ -179,6 +179,11 @@
     "title": "सेवा बुक करें",
     "selectDate": "तारीख चुनें",
     "selectTime": "समय स्लॉट चुनें",
+    "selectHours": "अवधि (घंटे)",
+    "hourlyRate": "प्रति घंटा दर",
+    "duration": "अवधि",
+    "hours": "घंटे",
+    "hoursLabel": "घंटे",
     "describeIssue": "समस्या का वर्णन करें (वैकल्पिक)",
     "issuePlaceholder": "जैसे: रसोई में पानी का नल टपक रहा है",
     "address": "सेवा पता",
@@ -196,7 +201,7 @@
     "status": {
       "pending": "लंबित",
       "confirmed": "पुष्टि हुई",
-      "inProgress": "प्रगति पर",
+      "inProgress": "चालू",
       "completed": "पूर्ण",
       "cancelled": "रद्द",
       "requested": "कार्यकर्ता की प्रतीक्षा"

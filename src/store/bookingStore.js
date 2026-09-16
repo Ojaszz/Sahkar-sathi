@@ -14,7 +14,10 @@ export const useBookingStore = create((set, get) => ({
     // Live mode: the booking is created on Supabase so all worker phones see it.
     if (liveBus.create) {
       const b = await liveBus.create(payload);
-      if (b) set({ bookings: [b, ...get().bookings] });
+      // publishBooking already merges the returned row for an instant customer
+      // update. Merge idempotently here too, rather than prepending it again:
+      // duplicate ids cause FlatList's duplicate-key render error.
+      if (b) get().mergeRemote(b);
       return b;
     }
     const b = await api.createBooking(payload);

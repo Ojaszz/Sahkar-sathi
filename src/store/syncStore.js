@@ -50,6 +50,7 @@ function mapRow(r) {
     coopFee: r.coop_fee ?? 0,
     date: r.date || (r.created_at || '').slice(0, 10),
     time: r.time || 'ASAP',
+    hours: r.hours ?? 1,
     payment: r.payment || 'unpaid',
     paymentMethod: r.payment_method || null,
     rating: r.rating ?? null,
@@ -255,6 +256,7 @@ export const useSyncStore = create((set, get) => ({
       issue: payload.issue || '',
       amount,
       coopFee: Math.round(amount * (COOP_FEE_PERCENT / 100)),
+      hours: payload.hours || 1,
       date: payload.date,
       time: payload.time,
       lat,
@@ -284,14 +286,15 @@ export const useSyncStore = create((set, get) => ({
 
   // Worker phone claims an open request. (Non-atomic for 3 humans — the first tap wins.)
   async acceptBooking(bookingId, workerId, workerName) {
-    // Optimistic: flip the card to 'confirmed' THIS tap, before the round-trip,
-    // so the worker never watches a spinner through a poll cycle.
-    const opt = applyLocal({ id: bookingId, status: 'confirmed', workerId, workerName });
+    // Optimistic: flip the card to 'inProgress' THIS tap, before the round-trip,
+    // so the worker never watches a spinner through a poll cycle. Accepting a live
+    // job means the work starts now → "Ongoing"; the customer's tracking auto-opens.
+    const opt = applyLocal({ id: bookingId, status: 'inProgress', workerId, workerName });
     try {
       const rows = await supabase.patch(
         'bookings',
         { id: `eq.${bookingId}`, status: 'eq.requested' },
-        { worker_id: workerId, worker_name: workerName, status: 'confirmed' }
+        { worker_id: workerId, worker_name: workerName, status: 'inProgress' }
       );
       const b = rows && rows[0] ? mapRow(rows[0]) : null;
       if (b) applyLocal(b);

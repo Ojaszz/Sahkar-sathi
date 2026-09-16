@@ -118,6 +118,7 @@ export default function BookingDetailScreen() {
       <Card style={styles.details}>
         <DetailRow icon="calendar" label={t('booking.date')} value={formatDate(booking.date)} />
         <DetailRow icon="clock-outline" label={t('booking.time')} value={booking.time} />
+        <DetailRow icon="timelapse" label={t('booking.duration')} value={`${booking.hours || 1} ${t('booking.hours')}`} />
         <DetailRow icon="map-marker-outline" label={t('booking.address')} value={booking.address} />
         <DetailRow icon="text-box-outline" label={t('booking.issue')} value={booking.issue} />
         <DetailRow icon="flag-outline" label={t('booking.status.requested')} value={booking.id.toUpperCase()} />
@@ -125,7 +126,7 @@ export default function BookingDetailScreen() {
 
       {/* Pricing */}
       <Card style={styles.details}>
-        <Row label={t('booking.basePrice')} value={formatINR(booking.amount)} />
+        <Row label={`${t('booking.hourlyRate')} · ${booking.hours || 1} ${t('booking.hours')}`} value={formatINR(booking.amount)} />
         <Row label={t('booking.coopFee')} value={formatINR(booking.coopFee)} muted />
         <View style={styles.divider} />
         <Row label={t('booking.total')} value={formatINR(booking.amount + booking.coopFee)} bold />
