@@ -25,11 +25,14 @@ export default function BookingDetailScreen() {
   const user = useAuthStore((s) => s.user);
   const { getById, setStatus, cancelBooking, addReview } = useBookingStore();
   const acceptBooking = useSyncStore((s) => s.acceptBooking);
+  const startJob = useSyncStore((s) => s.startJob);
+  const endJob = useSyncStore((s) => s.endJob);
   const booking = getById(id);
   const [showReview, setShowReview] = useState(false);
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState('');
   const openedTrackRef = useRef(null);
+  const [nowTick, setNowTick] = useState(0);
 
   // LIVE demo moment: the instant the worker flips the job to inProgress, the
   // customer phone auto-opens the tracking screen (poll merges the row in ~1.5s).
@@ -46,6 +49,16 @@ export default function BookingDetailScreen() {
     }
   }, [booking?.status, booking?.id]);
 
+  // Tick the elapsed timer once a second while a job is RUNNING (worker started it,
+  // hasn't ended it). 1 real second = 1 demo minute; the re-render lets the bill
+  // preview grow live so "billed for only time taken" is visible as it happens.
+  useEffect(() => {
+    if (user?.role !== 'worker') return;
+    if (!booking || booking.status !== 'inProgress' || !booking.startedAt || booking.endedAt) return;
+    const iv = setInterval(() => setNowTick((n) => n + 1), 1000);
+    return () => clearInterval(iv);
+  }, [user?.role, booking?.status, booking?.startedAt, booking?.endedAt]);
+
   if (!booking) {
     return (
       <Screen>
@@ -58,6 +71,17 @@ export default function BookingDetailScreen() {
   const worker = getWorker(booking.workerId);
   const service = getService(booking.service);
   const isCustomer = user?.role !== 'worker';
+
+  // Time-taken billing. Hourly rate is implicit in the booking (agreed base ÷
+  // booked hours). Every real second the job runs = 1 demo minute, so the bill is
+  // rate × demoMinutes/60 and grows live while the worker is on the clock.
+  const rate = booking.hours ? booking.amount / booking.hours : worker.price;
+  const started = !!booking.startedAt && !booking.endedAt;
+  const demoMinutes = started
+    ? Math.max(0, Math.floor((Date.now() - booking.startedAt) / 1000))
+    : booking.durationMin || 0;
+  const liveBase = Math.round(rate * (demoMinutes / 60));
+  const liveCoop = Math.round(liveBase * 0.08);
 
   const doCancel = () => {
     Alert.alert(t('bookings.cancelBooking'), t('bookings.cancelBookingQ'), [
@@ -117,6 +141,9 @@ export default function BookingDetailScreen() {
         <DetailRow icon="calendar" label={t('booking.date')} value={formatDate(booking.date)} />
         <DetailRow icon="clock-outline" label={t('booking.time')} value={booking.time} />
         <DetailRow icon="timelapse" label={t('booking.duration')} value={`${booking.hours || 1} ${t('booking.hours')}`} />
+        {demoMinutes ? (
+          <DetailRow icon="timer-outline" label={t('booking.timeTaken')} value={`${fmtDemoMinutes(demoMinutes)}${started ? ` · ${t('workerApp.demoClock')}` : ''}`} />
+        ) : null}
         <DetailRow icon="map-marker-outline" label={t('booking.address')} value={booking.address} />
         <DetailRow icon="text-box-outline" label={t('booking.issue')} value={booking.issue} />
         <DetailRow icon="flag-outline" label={t('booking.status.requested')} value={booking.id.toUpperCase()} />
@@ -124,10 +151,23 @@ export default function BookingDetailScreen() {
 
       {/* Pricing */}
       <Card style={styles.details}>
-        <Row label={`${t('booking.hourlyRate')} · ${booking.hours || 1} ${t('booking.hours')}`} value={formatINR(booking.amount)} />
-        <Row label={t('booking.coopFee')} value={formatINR(booking.coopFee)} muted />
+        <Row
+          label={
+            booking.durationMin
+              ? `${t('booking.timeTaken')} · ${fmtDemoMinutes(booking.durationMin)}`
+              : started
+              ? t('workerApp.billedSoFar', { time: fmtDemoMinutes(demoMinutes) })
+              : `${t('booking.hourlyRate')} · ${booking.hours || 1} ${t('booking.hours')}`
+          }
+          value={formatINR(started ? liveBase : booking.amount)}
+        />
+        <Row label={t('booking.coopFee')} value={formatINR(started ? liveCoop : booking.coopFee || 0)} muted />
         <View style={styles.divider} />
-        <Row label={t('booking.total')} value={formatINR(booking.amount + booking.coopFee)} bold />
+        <Row
+          label={t('booking.total')}
+          value={formatINR((started ? liveBase : booking.amount) + (started ? liveCoop : booking.coopFee || 0))}
+          bold
+        />
         {booking.payment === 'paid' ? (
           <View style={styles.paidRow}>
             <MaterialCommunityIcons name="check-circle" size={16} color={colors.success} />
@@ -226,7 +266,24 @@ export default function BookingDetailScreen() {
                 Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
               }}
             />
-            <Button title={t('workerApp.markComplete')} onPress={() => setStatus(booking.id, 'completed')} />
+            {!started ? (
+              <Button title={t('workerApp.startJob')} onPress={() => startJob(booking.id)} />
+            ) : (
+              <>
+                <View style={styles.timerCard}>
+                  <MaterialCommunityIcons name="timer-sand" size={22} color={colors.success} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={[typography.bodyBold, { color: colors.text }]}>
+                      {fmtDemoMinutes(demoMinutes)} · {formatINR(liveBase)}
+                    </Text>
+                    <Text style={[typography.small, { color: colors.textSecondary }]}>
+                      {t('workerApp.runningNow')} · {t('workerApp.demoClock')}
+                    </Text>
+                  </View>
+                </View>
+                <Button title={t('workerApp.endJob')} onPress={() => endJob(booking.id)} />
+              </>
+            )}
           </>
         )}
       </View>
@@ -248,6 +305,14 @@ export default function BookingDetailScreen() {
       </Modal>
     </Screen>
   );
+}
+
+// Demo clock formatting — 1 real second = 1 demo minute (45 real sec → "45m").
+function fmtDemoMinutes(min) {
+  if (!min || min < 60) return `${min || 0}m`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m ? `${h}h ${m}m` : `${h}h`;
 }
 
 function DetailRow({ icon, label, value }) {
@@ -303,6 +368,16 @@ const makeStyles = (colors) => StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm },
   divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm },
   paidRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: spacing.sm },
+  timerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.successLight,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.success,
+    padding: spacing.lg,
+  },
   actions: { gap: spacing.md, marginTop: spacing.lg },
   workerActions: { flexDirection: 'row', gap: spacing.md },
 });

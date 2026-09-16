@@ -28,9 +28,15 @@ let lastEmergSig = '';
 const POLL_MS = 1500;
 
 // Cheap change-detector so a poll only triggers re-renders when something moved.
+// Timer state (started_at / ended_at / duration_min) is included so a start/end
+// job lands on BOTH the worker phone and the customer phone, not just the poster.
 function signature(rows) {
   return rows
-    .map((r) => `${r.id}:${r.status}:${r.worker_id}:${r.customer_id}:${r.worker_name}`)
+    .map(
+      (r) =>
+        `${r.id}:${r.status}:${r.worker_id}:${r.customer_id}:${r.worker_name}` +
+        `:${r.started_at ?? ''}:${r.ended_at ?? ''}:${r.duration_min ?? ''}`
+    )
     .join('|');
 }
 
@@ -49,6 +55,9 @@ function mapRow(r) {
     amount: r.amount ?? 0,
     coopFee: r.coop_fee ?? 0,
     hours: r.hours ?? 1,
+    startedAt: r.started_at ?? null,
+    endedAt: r.ended_at ?? null,
+    durationMin: r.duration_min ?? null,
     date: r.date || (r.created_at || '').slice(0, 10),
     time: r.time || 'ASAP',
     payment: r.payment || 'unpaid',
@@ -74,6 +83,10 @@ function toBookingRow(booking) {
     issue: booking.issue || '',
     amount: booking.amount ?? 0,
     coop_fee: booking.coopFee ?? 0,
+    hours: booking.hours ?? 1,
+    started_at: booking.startedAt ?? null,
+    ended_at: booking.endedAt ?? null,
+    duration_min: booking.durationMin ?? null,
     date: booking.date || null,
     time: booking.time || null,
     lat: booking.lat ?? null,
@@ -359,6 +372,72 @@ export const useSyncStore = create((set, get) => ({
       if (opt) applyLocal(opt);
       return { ok: false, error: e.message };
     }
+  },
+
+  // Worker taps "Start job" → stamp the start time and switch to inProgress so
+  // the running timer (and its bill preview) appears on BOTH phones within a poll.
+  async startJob(bookingId) {
+    const startedAt = Date.now();
+    applyLocal({ id: bookingId, startedAt, status: 'inProgress' });
+    if (get().mode !== 'live') return;
+    try {
+      const rows = await supabase.patch(
+        'bookings',
+        { id: `eq.${bookingId}` },
+        { status: 'inProgress', started_at: startedAt }
+      );
+      const b = rows && rows[0] ? mapRow(rows[0]) : null;
+      if (b) applyLocal(b);
+    } catch {}
+  },
+
+  // Worker taps "End job" → bill for ONLY the time actually taken. Demo clock:
+  // 1 real second = 1 demo minute, so a 45-second job bills ~45 demo minutes.
+  async endJob(bookingId) {
+    const book = useBookingStore.getState().getById(bookingId);
+    if (!book || !book.startedAt) return null;
+    // Hourly rate is implicit: agreed base amount ÷ booked hours.
+    const rate = book.hours ? book.amount / book.hours : null;
+    const demoMinutes = Math.max(1, Math.round((Date.now() - book.startedAt) / 1000));
+    let newBase;
+    let coop;
+    if (rate) {
+      newBase = Math.max(1, Math.round(rate * (demoMinutes / 60)));
+      coop = Math.round(newBase * (COOP_FEE_PERCENT / 100));
+    } else {
+      newBase = book.amount;
+      coop = book.coopFee;
+    }
+    const patch = {
+      id: bookingId,
+      status: 'completed',
+      amount: newBase,
+      coopFee: coop,
+      endedAt: Date.now(),
+      durationMin: demoMinutes,
+    };
+    applyLocal(patch);
+    if (get().mode !== 'live') return patch;
+    try {
+      const rows = await supabase.patch(
+        'bookings',
+        { id: `eq.${bookingId}` },
+        {
+          status: 'completed',
+          amount: newBase,
+          coop_fee: coop,
+          ended_at: patch.endedAt,
+          duration_min: demoMinutes,
+        }
+      );
+      const b = rows && rows[0] ? mapRow(rows[0]) : null;
+      if (b) {
+        applyLocal(b);
+        // Mentor completed a job → attach the tag-along pair so shared ratings land.
+        useTagAlongStore.getState().attachToCompleted(b);
+      }
+    } catch {}
+    return patch;
   },
 
   async setStatus(bookingId, status) {

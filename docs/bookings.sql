@@ -30,6 +30,14 @@ alter table bookings add column if not exists time text;
 -- hours = how long the job is expected to take; the amount is hourly rate × hours.
 alter table bookings add column if not exists hours integer default 1;
 
+-- Time-taken billing (demo timer): the worker taps Start (stamps started_at),
+-- runs on the demo clock (1 real sec = 1 demo minute), then taps End job. The
+-- app re-bills amount/coop_fee to ONLY the elapsed time and stores it here.
+-- started_at/ended_at are epoch ms; duration_min is the billed demo minutes.
+alter table bookings add column if not exists started_at bigint;
+alter table bookings add column if not exists ended_at bigint;
+alter table bookings add column if not exists duration_min integer;
+
 -- Row Level Security: wide open to anon (same pattern as messages / tag_alongs).
 -- Demo-grade — 4 phones + anon key must work without auth complexity.
 alter table bookings enable row level security;
