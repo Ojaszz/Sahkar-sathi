@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen, Button, Card, CoopCallout } from '../src/components/ui';
@@ -9,7 +9,7 @@ import { WORKERS, workerArea } from '../src/data/workers';
 import { getService } from '../src/data/services';
 import { useAuthStore } from '../src/store/authStore';
 import { useSyncStore } from '../src/store/syncStore';
-import { deviceId } from '../src/lib/supabase';
+import { deviceId, getBoardUrl, setBoardUrl, checkBoard } from '../src/lib/supabase';
 import { resetDemo } from '../src/utils/resetDemo';
 import { useSettingsStore } from '../src/store/settingsStore';
 import { t } from '../src/i18n';
@@ -22,6 +22,20 @@ export default function DemoSetupScreen() {
   useSettingsStore((s) => s.theme); // theme re-render
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [boardUrl, setBoardUrlInput] = useState('');
+  const [boardStatus, setBoardStatus] = useState(null); // null | 'checking' | { ok, error? }
+
+  // Load the current board URL on mount and show its reachability.
+  useEffect(() => {
+    getBoardUrl().then((u) => {
+      // Show the URL without the bundled Supabase fallback (too noisy).
+      const isLocal = u && !u.includes('supabase.co');
+      setBoardUrlInput(isLocal ? u : '');
+      return isLocal ? checkBoard(u) : null;
+    }).then((r) => {
+      if (r) setBoardStatus(r);
+    });
+  }, []);
 
   const players = WORKER_PICK_IDS.map((id) => WORKERS.find((w) => w.id === id)).filter(Boolean);
 
@@ -73,6 +87,21 @@ export default function DemoSetupScreen() {
     }
   };
 
+  // Point this phone at a same-WiFi board (server/board.js) OR back at Supabase.
+  const connectBoard = async () => {
+    const url = boardUrl.trim();
+    if (boardStatus?.checking) return;
+    if (!url) {
+      await setBoardUrl('');
+      setBoardStatus(null);
+      return; // empty input = back to the bundled Supabase board
+    }
+    setBoardStatus({ ok: null, checking: true });
+    const r = await checkBoard(url);
+    setBoardStatus(r);
+    if (r.ok) await setBoardUrl(url);
+  };
+
   // "Start everything fresh" — wipe this phone (and optionally the shared board)
   // then land back on login.
   const doReset = (board) => {
@@ -110,6 +139,58 @@ export default function DemoSetupScreen() {
           {t('demoSetup.subtitle')}
         </Text>
       </View>
+
+      {/* Same-WiFi board: point this phone at the laptop's server/board.js, or
+          clear the field to use the bundled Supabase project instead. */}
+      <Card style={styles.boardCard}>
+        <View style={styles.boardHeader}>
+          <MaterialCommunityIcons name="access-point" size={20} color={colors.primary} />
+          <Text style={[typography.bodyBold, { color: colors.text, flex: 1 }]}>
+            {t('demoSetup.boardTitle')}
+          </Text>
+          {boardStatus === null || boardStatus?.ok ? (
+            <Text style={[typography.small, { color: colors.success }]}>✓</Text>
+          ) : (
+            <Text style={[typography.small, { color: colors.danger }]}>✗</Text>
+          )}
+        </View>
+        <Text style={[typography.caption, { color: colors.textMuted, marginBottom: spacing.sm }]}>
+          {t('demoSetup.boardHint')}
+        </Text>
+        <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
+          <TextInput
+            style={styles.boardInput}
+            value={boardUrl}
+            onChangeText={(v) => {
+              setBoardUrlInput(v);
+              setBoardStatus(null);
+            }}
+            placeholder="http://192.168.1.50:4000"
+            placeholderTextColor={colors.textMuted}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="url"
+          />
+          <Button title={t('demoSetup.boardConnect')} size="sm" onPress={connectBoard} disabled={boardStatus?.ok === true} />
+        </View>
+        {boardStatus?.checking && (
+          <Text style={[typography.small, { color: colors.textSecondary, marginTop: spacing.sm }]}>
+            {t('demoSetup.boardChecking')}…
+          </Text>
+        )}
+        {boardStatus && !boardStatus.checking && (
+          <Text
+            numberOfLines={2}
+            style={[
+              typography.small,
+              { marginTop: spacing.sm, color: boardStatus.ok ? colors.success : colors.danger },
+            ]}
+          >
+            {boardStatus.ok ? t('demoSetup.boardConnected') : t('demoSetup.boardFailed')}
+            {!boardStatus.ok && boardStatus.error ? ` — ${boardStatus.error}` : ''}
+          </Text>
+        )}
+      </Card>
 
       <Text style={[typography.h3, { color: colors.text }]}>{t('demoSetup.customerPhone')}</Text>
       <Card style={styles.playerCard}>
@@ -169,5 +250,18 @@ const makeStyles = (colors) =>
       alignItems: 'center',
       gap: spacing.md,
       marginBottom: spacing.sm,
+    },
+    boardCard: { marginBottom: spacing.lg },
+    boardHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xs },
+    boardInput: {
+      flex: 1,
+      minHeight: 44,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: spacing.md,
+      backgroundColor: colors.background,
+      color: colors.text,
+      fontSize: 14,
     },
   });

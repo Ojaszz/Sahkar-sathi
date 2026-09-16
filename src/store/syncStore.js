@@ -137,13 +137,14 @@ export const useSyncStore = create((set, get) => ({
         const merged = (rows || []).map(mapRow);
         set({ liveFeed: merged, online: true, connected: true });
         // Merge rows that belong to THIS phone into the local booking store.
-        // Customer rows match the device id; worker rows match the STATIC worker
-        // id the phone logged in as (w1/w2/...), because device ids differ.
+        // Demo customers use the device id, while signed-in customers use their
+        // Supabase user id. Workers use their account/static worker id.
         const myId = self.myDeviceId;
         const userId = useAuthStore.getState().user?.id;
         for (const b of merged) {
           if (
             b.customerId === myId ||
+            (userId && b.customerId === userId) ||
             b.workerId === myId ||
             (userId && b.workerId === userId)
           ) {
@@ -233,32 +234,52 @@ export const useSyncStore = create((set, get) => ({
   },
 
   // Customer phone creates a booking (status 'requested') visible to all workers.
+  // LOCAL-FIRST: the booking is merged into this phone's store immediately so the
+  // customer never stares at nothing — then we best-effort push to the board.
   async publishBooking(payload) {
     const myId = get().myDeviceId;
-    if (!myId) return null;
+    const customerId = payload.customerId || myId;
+    if (!customerId) return null;
     const id = newBookingId();
-    const [lat, lng] = customerLocationFor({ id });
+    const [lat, lng] = customerLocationFor({ id }) || [18.5204, 73.8567]; // Pune default
     const amount = payload.amount || 500;
-    const row = await supabase.insert('bookings', {
+    const local = {
       id,
       service: payload.service,
-      customer_id: myId,
-      customer_name: payload.customerName || 'Customer',
-      worker_id: payload.workerId || null, // static "preferred" face until a live worker claims
-      worker_name: payload.workerName || '',
+      workerId: payload.workerId || null,
+      workerName: payload.workerName || '',
+      customerId,
+      customerName: payload.customerName || 'Customer',
       status: 'requested',
       address: payload.address || 'FC Road, Pune',
       issue: payload.issue || '',
       amount,
-      coop_fee: Math.round(amount * (COOP_FEE_PERCENT / 100)),
-      date: payload.date, // customer's chosen slot survives the round-trip now
+      coopFee: Math.round(amount * (COOP_FEE_PERCENT / 100)),
+      date: payload.date,
       time: payload.time,
       lat,
       lng,
-    });
-    const b = row && row[0] ? mapRow(row[0]) : null;
-    if (b) useBookingStore.getState().mergeRemote(b);
-    return b;
+      isLive: true,
+    };
+    // Show on THIS phone instantly — the booking now works even when the board
+    // is unreachable.
+    useBookingStore.getState().mergeRemote(local);
+    try {
+      const row = await supabase.insert('bookings', {
+        ...local,
+        customer_id: customerId,
+        customer_name: local.customerName,
+        worker_id: local.workerId,
+        worker_name: local.workerName,
+        coop_fee: local.coopFee,
+      });
+      const b = row && row[0] ? mapRow(row[0]) : local;
+      if (b && b !== local) useBookingStore.getState().mergeRemote(b);
+      return b || local;
+    } catch {
+      // Board unreachable — the local booking still stands on this phone.
+      return local;
+    }
   },
 
   // Worker phone claims an open request. (Non-atomic for 3 humans — the first tap wins.)

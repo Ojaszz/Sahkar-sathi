@@ -13,6 +13,48 @@ const SUPABASE_ANON_KEY =
   process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ienN1aXh4YmRzcmNpbXducXBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1MzE5ODUsImV4cCI6MjEwNTEwNzk4NX0.ZMmr6Vd2Q4K8eIy9oqcq0gCCZZd5F4B1_8r1f5fqh78';
 
+// ---- Board URL override -----------------------------------------------------
+// The demo can run against EITHER the Supabase project above (any network) OR a
+// same-WiFi board server (server/board.js) running on the demo laptop — no
+// Supabase needed. The role-setup screen stores the chosen address here; an
+// empty value keeps the bundled Supabase URL. Read per request so a switch takes
+// effect on the very next poll (the sync loop calls these every ~1.5 s).
+const BOARD_KEY = 'ss_board_url';
+let boardOverride = null;
+let boardOverrideLoaded = false;
+
+async function loadBoardOverride() {
+  if (boardOverrideLoaded) return boardOverride;
+  boardOverrideLoaded = true;
+  try {
+    boardOverride = await AsyncStorage.getItem(BOARD_KEY);
+  } catch {
+    boardOverride = null;
+  }
+  return boardOverride;
+}
+
+export async function setBoardUrl(url) {
+  boardOverride = url && url.trim() ? url.trim().replace(/\/+$/, '') : null;
+  boardOverrideLoaded = true;
+  try {
+    if (boardOverride) await AsyncStorage.setItem(BOARD_KEY, boardOverride);
+    else await AsyncStorage.removeItem(BOARD_KEY);
+  } catch {}
+  return boardOverride;
+}
+
+export async function getBoardUrl() {
+  const ov = await loadBoardOverride();
+  return ov || SUPABASE_URL;
+}
+
+// The base URL used for the DATA board (/rest/v1/*). When a local board is set
+// we use it verbatim; otherwise the bundled Supabase project.
+async function dataBaseUrl() {
+  return (await loadBoardOverride()) || SUPABASE_URL;
+}
+
 const HEADERS = {
   apikey: SUPABASE_ANON_KEY,
   Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
@@ -29,9 +71,10 @@ function qs(params = {}) {
 }
 
 async function http(path, options = {}) {
+  const base = await dataBaseUrl();
   let res;
   try {
-    res = await fetch(`${SUPABASE_URL}${path}`, {
+    res = await fetch(`${base}${path}`, {
       ...options,
       headers: { ...HEADERS, ...(options.headers || {}) },
     });
@@ -125,6 +168,24 @@ export function newTagAlongId() {
 // Tiny id for a new emergency job row (client-generated, same pattern).
 export function newEmergencyId() {
   return 'em' + Math.random().toString(36).slice(2, 10);
+}
+
+// ---- Board health check ------------------------------------------------------
+// Validates a board URL (local or Supabase) is reachable and running the
+// Sahkar Sathi demo.  The local board returns a JSON status at "/" — Supabase
+// ignores that path but returns a non-5xx, which we accept as "reachable".
+export async function checkBoard(url) {
+  let res;
+  try {
+    res = await fetch(`${url.replace(/\/+$/, '')}/`, {
+      method: 'GET',
+      headers: HEADERS,
+      signal: AbortSignal.timeout(4000),
+    });
+    return { ok: true, status: res.status };
+  } catch (e) {
+    return { ok: false, error: String((e && e.message) || e) };
+  }
 }
 
 // ---- Email / password auth (Supabase GoTrue REST) ---------------------------

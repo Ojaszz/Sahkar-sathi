@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, FlatList, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, Pressable, FlatList } from 'react-native';
 import { Screen, EmptyState } from '../../src/components/ui';
 import { BookingCard } from '../../src/components/booking';
 import { colors, radius, spacing, typography } from '../../src/theme';
@@ -18,7 +17,6 @@ const TABS = [
 export default function CustomerBookings() {
   const styles = makeStyles(colors);
   useSettingsStore((s) => s.theme); // theme re-render
-  const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const { bookings, loadBookings } = useBookingStore();
   const [tab, setTab] = useState('upcoming');
@@ -27,10 +25,10 @@ export default function CustomerBookings() {
     loadBookings();
   }, []);
 
-  const myBookings = useMemo(
-    () => bookings.filter((b) => b.customerId === user?.id),
-    [bookings, user]
-  );
+  const myBookings = useMemo(() => {
+    if (!Array.isArray(bookings) || !user?.id) return [];
+    return bookings.filter((booking) => booking?.customerId === user.id);
+  }, [bookings, user?.id]);
 
   const filtered = useMemo(() => {
     if (tab === 'upcoming') return myBookings.filter((b) => ['requested', 'confirmed', 'inProgress'].includes(b.status));
@@ -44,35 +42,32 @@ export default function CustomerBookings() {
         <Text style={[typography.h2, { color: colors.text }]}>{t('bookings.title')}</Text>
       </View>
 
-      {myBookings.length === 0 ? (
-        <EmptyState
-          icon="calendar-clock"
-          title={t('bookings.empty')}
-          note={t('bookings.emptyNote')}
-        />
-      ) : (
-        <>
-          <View style={styles.tabs}>
-            {TABS.map((tb) => (
-              <Pressable key={tb.key} style={[styles.tab, tab === tb.key && styles.tabActive]} onPress={() => setTab(tb.key)}>
-                <Text style={[typography.captionMedium, tab === tb.key && { color: colors.primary }]}>{tb.label}</Text>
-              </Pressable>
-            ))}
-          </View>
-
-          <FlatList
-            data={filtered}
-            keyExtractor={(b) => b.id}
-            renderItem={({ item }) => <BookingCard booking={item} />}
-            contentContainerStyle={{ paddingBottom: 120, paddingTop: spacing.md }}
-            showsVerticalScrollIndicator={false}
-            style={{ flex: 1 }}
-            ListEmptyComponent={
-              <EmptyState icon="calendar-blank" title={t('bookings.empty')} note={t('bookings.emptyNote')} />
-            }
+      <FlatList
+        data={filtered}
+        keyExtractor={(booking, index) => String(booking?.id || `booking-${index}`)}
+        renderItem={({ item }) => <BookingCard booking={item} />}
+        contentContainerStyle={{ paddingBottom: 120, paddingTop: spacing.md, flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        ListHeaderComponent={
+          myBookings.length > 0 ? (
+            <View style={styles.tabs}>
+              {TABS.map((tb) => (
+                <Pressable key={tb.key} style={[styles.tab, tab === tb.key && styles.tabActive]} onPress={() => setTab(tb.key)}>
+                  <Text style={[typography.captionMedium, tab === tb.key && { color: colors.primary }]}>{tb.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : null
+        }
+        ListEmptyComponent={
+          <EmptyState
+            icon={myBookings.length === 0 ? 'calendar-clock' : 'calendar-blank'}
+            title={t('bookings.empty')}
+            note={t('bookings.emptyNote')}
           />
-        </>
-      )}
+        }
+      />
     </Screen>
   );
 }

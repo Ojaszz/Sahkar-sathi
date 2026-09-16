@@ -8,6 +8,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../src/store/authStore';
 import { useSettingsStore } from '../src/store/settingsStore';
 import { useDeclineStore } from '../src/store/declineStore';
+import { useSyncStore } from '../src/store/syncStore';
 import { colors, typography, applyColorScheme } from '../src/theme';
 
 function SplashScreen() {
@@ -61,6 +62,8 @@ export default function RootLayout() {
   const restoreSession = useAuthStore((s) => s.restoreSession);
   const restoreSettings = useSettingsStore((s) => s.restore);
   const restoreDeclined = useDeclineStore((s) => s.restore);
+  const authLoading = useAuthStore((s) => s.loading);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const theme = useSettingsStore((s) => s.theme);
 
   useEffect(() => {
@@ -68,6 +71,15 @@ export default function RootLayout() {
     restoreSettings();
     restoreDeclined();
   }, []);
+
+  // The shared Supabase board must start after session hydration, not only from
+  // a login button. That keeps bookings, chat, and SOS dispatches live after
+  // an app restart and for email/password accounts.
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      useSyncStore.getState().init();
+    }
+  }, [authLoading, isAuthenticated]);
 
   return (
     <SafeAreaProvider>
