@@ -16,6 +16,11 @@ export const SERVICES = [
 export const SERVICE_BY_ID = Object.fromEntries(SERVICES.map((s) => [s.id, s]));
 
 export function getService(id) {
+  // Emergency is NOT a browsable customer category (never in SERVICES above) —
+  // it exists only as a booking.service for SOS-accepted jobs.
+  if (id === 'emergency') {
+    return { id: 'emergency', icon: 'alarm-light', price: 500, color: '#D9534F' };
+  }
   return SERVICE_BY_ID[id] || SERVICES[0];
 }
 

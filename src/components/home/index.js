@@ -61,7 +61,7 @@ const makeStyles = (colors) => StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.lg,
+    justifyContent: 'space-between',
   },
   catItem: { width: '18%', alignItems: 'center', gap: 6 },
   catIcon: {

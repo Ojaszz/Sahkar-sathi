@@ -1,5 +1,5 @@
 // Root layout — providers + auth gate
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useReducer } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Stack, Redirect, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../src/store/authStore';
 import { useSettingsStore } from '../src/store/settingsStore';
+import { useDeclineStore } from '../src/store/declineStore';
 import { colors, typography, applyColorScheme } from '../src/theme';
 
 function SplashScreen() {
@@ -46,7 +47,7 @@ function Gate({ children }) {
     );
   }
 
-  const target = user?.role === 'worker' ? '/(worker)' : '/(customer)';
+  const target = user?.role === 'worker' ? '/(worker)' : user?.role === 'admin' ? '/(admin)' : '/(customer)';
   return (
     <>
       {children}
@@ -59,24 +60,23 @@ export default function RootLayout() {
   const styles = makeStyles(colors);
   const restoreSession = useAuthStore((s) => s.restoreSession);
   const restoreSettings = useSettingsStore((s) => s.restore);
+  const restoreDeclined = useDeclineStore((s) => s.restore);
   const theme = useSettingsStore((s) => s.theme);
 
   useEffect(() => {
     restoreSession();
     restoreSettings();
+    restoreDeclined();
   }, []);
-
-  // Keep the imported colors singleton in sync (idempotent with restore())
-  useEffect(() => {
-    applyColorScheme(theme);
-  }, [theme]);
 
   return (
     <SafeAreaProvider>
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-      {/* key forces a full remount on theme change so every makeStyles(colors)
-          child re-snapshots the (mutated) palette */}
-      <View key={theme} style={{ flex: 1 }}>
+      {/* ThemeGate swaps the palette in place and forces one re-render WITHOUT
+          unmounting — so scroll position, keyboard, and the screen stack all
+          survive a dark/light toggle (the old `key={theme}` remount snapped
+          the screen back to the top). */}
+      <ThemeGate theme={theme}>
         <Gate>
           <Stack
             screenOptions={{
@@ -92,13 +92,26 @@ export default function RootLayout() {
             <Stack.Screen name="booking/[id]" />
             <Stack.Screen name="payment" options={{ presentation: 'modal' }} />
             <Stack.Screen name="notifications" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="demo-setup" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="worker-onboarding" options={{ presentation: 'modal' }} />
             <Stack.Screen name="emergency" options={{ presentation: 'fullScreenModal' }} />
             <Stack.Screen name="track/[id]" options={{ presentation: 'fullScreenModal' }} />
           </Stack>
         </Gate>
-      </View>
+      </ThemeGate>
     </SafeAreaProvider>
   );
+}
+
+// Mutates the colors singleton THEN forces a re-render, so every makeStyles(colors)
+// child re-snapshots the new palette — without a key-based remount.
+function ThemeGate({ theme, children }) {
+  const [, bump] = useReducer((x) => x + 1, 0);
+  useLayoutEffect(() => {
+    applyColorScheme(theme);
+    bump(); // re-render children against the (now mutated) palette
+  }, [theme]);
+  return <View style={{ flex: 1 }}>{children}</View>;
 }
 
 const makeStyles = (colors) => StyleSheet.create({

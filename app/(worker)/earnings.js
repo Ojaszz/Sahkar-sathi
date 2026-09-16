@@ -8,9 +8,11 @@ import { useAuthStore } from '../../src/store/authStore';
 import { formatINR, formatDate } from '../../src/utils/format';
 import { getService } from '../../src/data/services';
 import { t } from '../../src/i18n';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function WorkerEarnings() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const user = useAuthStore((s) => s.user);
   const { bookings, loadBookings } = useBookingStore();
 
@@ -49,22 +51,22 @@ export default function WorkerEarnings() {
           <Text style={[typography.h3, { color: colors.accent }]}>− {formatINR(coopShare)}</Text>
         </Card>
         <Card style={styles.feeCard}>
-          <Text style={[typography.small, { color: colors.textMuted }]}>{t('workerApp.totalEarnings')} (net)</Text>
+          <Text style={[typography.small, { color: colors.textMuted }]}>{t('workerApp.totalEarnings')} ({t('workerApp.net')})</Text>
           <Text style={[typography.h3, { color: colors.text }]}>{formatINR(net)}</Text>
         </Card>
       </View>
 
       <CoopCallout
         style={{ marginBottom: spacing.lg }}
-        icon="shield-heart"
-        title="Your coop contribution"
-        note="Powers your insurance premium, skill training & welfare fund. Transparent — no hidden platform cuts."
+        icon="shield-check"
+        title={t('workerApp.coopContribution')}
+        note={t('workerApp.coopContributionNote')}
       />
 
       {/* Payout history */}
       <Text style={[typography.h3, styles.historyTitle]}>{t('workerApp.payoutHistory')}</Text>
       {completed.length === 0 ? (
-        <Text style={[typography.caption, { color: colors.textMuted }]}>No payouts yet.</Text>
+        <Text style={[typography.caption, { color: colors.textMuted }]}>{t('workerApp.noPayouts')}</Text>
       ) : (
         completed.map((b) => {
           const service = getService(b.service);
@@ -81,7 +83,7 @@ export default function WorkerEarnings() {
               </View>
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={[typography.bodyBold, { color: colors.text }]}>{formatINR(b.amount)}</Text>
-                <Text style={[typography.small, { color: colors.success }]}>net {formatINR(b.amount - b.coopFee)}</Text>
+                <Text style={[typography.small, { color: colors.success }]}>{t('workerApp.net')} {formatINR(b.amount - b.coopFee)}</Text>
               </View>
             </View>
           );

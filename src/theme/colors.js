@@ -57,9 +57,9 @@ const DARK_COLORS = {
   border: '#2A352E',
   divider: '#232E27',
 
-  text: '#E8F0EA',
-  textSecondary: '#A9B8AE',
-  textMuted: '#77877D',
+  text: '#F2F7F4',
+  textSecondary: '#C0CDC4',
+  textMuted: '#94A59B',
   textInverse: '#0F1713',
 
   success: '#3DD68C',

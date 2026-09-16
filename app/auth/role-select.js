@@ -6,6 +6,7 @@ import { Screen } from '../../src/components/ui';
 import { colors, radius, spacing, typography } from '../../src/theme';
 import { t } from '../../src/i18n';
 import { useAuthStore } from '../../src/store/authStore';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 const ROLES = [
   { role: 'customer', icon: 'home-heart', color: colors.primary, title: 'asCustomer', desc: 'customerDesc' },
@@ -14,6 +15,7 @@ const ROLES = [
 
 export default function RoleSelectScreen() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const router = useRouter();
 
   const choose = async (role) => {
@@ -26,7 +28,7 @@ export default function RoleSelectScreen() {
     <Screen>
       <View style={styles.top}>
         <MaterialCommunityIcons name="handshake" size={34} color={colors.primary} />
-        <Text style={[typography.h1, { color: colors.primaryDark, textAlign: 'center' }]}>{t('auth.selectRole')}</Text>
+        <Text style={[typography.h1, { color: colors.text, textAlign: 'center' }]}>{t('auth.selectRole')}</Text>
         <Text style={[typography.caption, { color: colors.textSecondary, textAlign: 'center' }]}>{t('auth.selectRoleSub')}</Text>
       </View>
 

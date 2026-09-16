@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { WORKERS, getWorker } from '../data/workers';
+import { useWorkerDirectoryStore } from './workerDirectoryStore';
 
 export const useWorkerStore = create((set, get) => ({
   workers: WORKERS,
@@ -16,18 +17,20 @@ export const useWorkerStore = create((set, get) => ({
   setOnlyAvailable: (onlyAvailable) => set({ onlyAvailable }),
   clearFilters: () => set({ query: '', activeCategory: null, sortBy: 'rating', minRating: 0, onlyAvailable: false }),
 
-  // filtered + sorted view
+  // filtered + sorted view. Static catalogue first, then any REGISTERED workers
+  // (email-signup + onboarding) published to the worker_profiles board.
   visibleWorkers() {
-    const { workers, query, activeCategory, sortBy, minRating, onlyAvailable } = get();
-    let list = [...workers];
+    const { query, activeCategory, sortBy, minRating, onlyAvailable } = get();
+    const registered = useWorkerDirectoryStore.getState().profiles;
+    let list = [...WORKERS, ...registered];
     if (activeCategory) list = list.filter((w) => w.service === activeCategory);
     if (query) {
       const q = query.toLowerCase();
       list = list.filter(
         (w) =>
-          w.name.toLowerCase().includes(q) ||
-          w.service.toLowerCase().includes(q) ||
-          w.skills.some((s) => s.toLowerCase().includes(q))
+          (w.name || '').toLowerCase().includes(q) ||
+          (w.service || '').toLowerCase().includes(q) ||
+          (w.skills || []).some((s) => s.toLowerCase().includes(q))
       );
     }
     if (minRating > 0) list = list.filter((w) => w.rating >= minRating);
@@ -46,5 +49,14 @@ export const useWorkerStore = create((set, get) => ({
     return list;
   },
 
-  getWorker: (id) => getWorker(id),
+  // Resolve a worker id against BOTH halves — registered profiles first (a
+  // registered worker must never fall back to the catalogue), then the catalogue.
+  getWorker: (id) => {
+    const dir = useWorkerDirectoryStore.getState().byId[id];
+    if (dir) return dir;
+    return getWorker(id);
+  },
+
+  // True when the id is an email-registered worker (not a catalogue face).
+  isRegistered: (id) => !!useWorkerDirectoryStore.getState().byId[id],
 }));

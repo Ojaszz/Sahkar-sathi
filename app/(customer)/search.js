@@ -2,16 +2,19 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Screen } from '../../src/components/ui';
+import { Screen, Button } from '../../src/components/ui';
 import { WorkerCard } from '../../src/components/worker';
 import { SearchBar } from '../../src/components/home';
 import { colors, radius, spacing, typography } from '../../src/theme';
 import { useWorkerStore } from '../../src/store/workerStore';
+import { useWorkerDirectoryStore } from '../../src/store/workerDirectoryStore';
 import { t } from '../../src/i18n';
 import { USER_LOCATION } from '../../src/utils/constants';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function SearchScreen() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const router = useRouter();
   const [view, setView] = useState('list'); // list | map
   const query = useWorkerStore((s) => s.query);
@@ -20,6 +23,8 @@ export default function SearchScreen() {
   const minRating = useWorkerStore((s) => s.minRating);
   const onlyAvailable = useWorkerStore((s) => s.onlyAvailable);
   const { setQuery, setSortBy, setMinRating, setOnlyAvailable, clearFilters, visibleWorkers } = useWorkerStore();
+  // Re-render when newly-registered worker profiles land (async poll).
+  useWorkerDirectoryStore((s) => s.profiles);
 
   const results = useMemo(() => visibleWorkers(), [query, activeCategory, sortBy, minRating, onlyAvailable]);
 
@@ -88,10 +93,20 @@ export default function SearchScreen() {
           keyExtractor={(w) => w.id}
           renderItem={({ item }) => <WorkerCard worker={item} />}
           showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 120 }}
         />
       ) : (
-        <MapView workers={results} onSelect={(w) => router.push(`/worker/${w.id}`)} />
+        <MapView
+          workers={results}
+          onSelect={(w) => {
+            if (w === '__list__') {
+              setView('list');
+              return;
+            }
+            router.push(`/worker/${w.id}`);
+          }}
+        />
       )}
     </Screen>
   );
@@ -116,23 +131,70 @@ function ToggleBtn({ icon, label, active, onPress }) {
   );
 }
 
-// Lazy import map to keep other screens light even if maps fail in some runtimes.
-// NOTE: react-native-maps exports MapView as the *default* export (no named .MapView),
-// so we read `.default` explicitly.
+// Map view for search. react-native-maps 1.27.2 ships with the app and works in
+// Expo Go; wrapped in a try/catch so a missing/native-failing map degrades to a
+// helpful card instead of white-screening the whole search screen.
 function MapView({ workers, onSelect }) {
   const styles = makeStyles(colors);
-  const RNMaps = require('react-native-maps');
+
+  let RNMaps;
+  try {
+    RNMaps = require('react-native-maps');
+  } catch {
+    RNMaps = null;
+  }
+
+  // If the native module isn't available (e.g. unusual runtime), show a graceful
+  // placeholder so the List/Map toggle still works.
+  if (!RNMaps) {
+    return (
+      <View style={[styles.mapFallback, { alignItems: 'center', justifyContent: 'center', gap: spacing.md }]}>
+        <MaterialCommunityIcons name="map-marker-off-outline" size={44} color={colors.textMuted} />
+        <Text style={[typography.h3, { color: colors.text, textAlign: 'center' }]}>{t('search.mapFallbackTitle')}</Text>
+        <Text style={[typography.caption, { color: colors.textMuted, textAlign: 'center' }]}>{t('search.mapFallbackNote')}</Text>
+        <Button title={t('search.viewAsList')} variant="outline" size="sm" fullWidth onPress={() => onSelect('__list__')} />
+      </View>
+    );
+  }
+
   const NativeMapView = RNMaps.default || RNMaps;
+
+  // Fit the camera to show every result + the user's position, with padding.
+  const region = useMemo(() => {
+    const pts = [...workers.map((w) => w.location), USER_LOCATION];
+    let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+    for (const [la, ln] of pts) {
+      minLat = Math.min(minLat, la); maxLat = Math.max(maxLat, la);
+      minLng = Math.min(minLng, ln); maxLng = Math.max(maxLng, ln);
+    }
+    const dLat = Math.max(maxLat - minLat, 0.02);
+    const dLng = Math.max(maxLng - minLng, 0.02);
+    return {
+      latitude: (minLat + maxLat) / 2,
+      longitude: (minLng + maxLng) / 2,
+      latitudeDelta: dLat * 1.4,
+      longitudeDelta: dLng * 1.4,
+    };
+  }, [workers]);
+
   return (
     <NativeMapView
       style={styles.map}
-      initialRegion={{
-        latitude: USER_LOCATION[0],
-        longitude: USER_LOCATION[1],
-        latitudeDelta: 0.12,
-        longitudeDelta: 0.12,
-      }}
+      initialRegion={region}
+      showsUserLocation
+      loadingEnabled
     >
+      {/* User's assumed location */}
+      <RNMaps.Marker
+        coordinate={{ latitude: USER_LOCATION[0], longitude: USER_LOCATION[1] }}
+        anchor={{ x: 0.5, y: 0.5 }}
+        zIndex={99}
+      >
+        <View style={styles.userMarker}>
+          <MaterialCommunityIcons name="navigation" size={16} color={colors.primary} />
+        </View>
+      </RNMaps.Marker>
+
       {workers.map((w) => (
         <RNMaps.Marker
           key={w.id}
@@ -154,7 +216,7 @@ function EmptyHint() {
     <View style={styles.empty}>
       <MaterialCommunityIcons name="magnify-close" size={44} color={colors.textMuted} />
       <Text style={[typography.h3, { color: colors.text }]}>{t('search.noResults')}</Text>
-      <Text style={[typography.caption, { color: colors.textMuted }]}>Try a different search or clear your filters.</Text>
+      <Text style={[typography.caption, { color: colors.textMuted }]}>{t('search.tryDifferent')}</Text>
     </View>
   );
 }
@@ -206,5 +268,20 @@ const makeStyles = (colors) => StyleSheet.create({
   toggleActive: { backgroundColor: colors.primaryLight },
   map: { flex: 1, borderRadius: radius.lg },
   marker: { backgroundColor: colors.white, borderRadius: 16, padding: 2, borderWidth: 2, borderColor: colors.primary },
+  userMarker: {
+    backgroundColor: colors.primaryLight,
+    borderRadius: 14,
+    padding: 4,
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  mapFallback: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.xl,
+  },
   empty: { alignItems: 'center', paddingVertical: spacing.xxxl * 2, gap: spacing.sm },
 });

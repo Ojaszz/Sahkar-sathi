@@ -83,6 +83,39 @@ export function roadPathFor(start, customer) {
   return pts;
 }
 
+// Nearest Pune area from a GPS coordinate.  Returns the full area object from
+// PUNE_AREAS ({ area, pincode, lat, lng }) closest to the given [lat, lng].
+export function nearestArea(coords) {
+  const { PUNE_AREAS } = require('./puneAreas');
+  let best = null;
+  let bestDist = Infinity;
+  for (const a of PUNE_AREAS) {
+    const d = distanceKm(coords, [a.lat, a.lng]);
+    if (d < bestDist) {
+      bestDist = d;
+      best = a;
+    }
+  }
+  return best;
+}
+
+// Use expo-location (already installed) to get the device's current position and
+// return the nearest Pune area.  Returns { area, pincode } or null on failure.
+// Caller must request permission BEFORE calling this — or let the caller
+// handle the permission prompt and call this on success.
+export async function getCurrentArea() {
+  try {
+    const Location = require('expo-location');
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') return null;
+    const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    const area = nearestArea([pos.coords.latitude, pos.coords.longitude]);
+    return area ? { area: area.area, pincode: area.pincode, lat: area.lat, lng: area.lng } : null;
+  } catch {
+    return null;
+  }
+}
+
 // Total path length (km) along a polyline of [lat, lng] points
 export function pathLength(points) {
   let s = 0;

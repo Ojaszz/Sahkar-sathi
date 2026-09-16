@@ -8,9 +8,11 @@ import { colors, spacing, typography } from '../../src/theme';
 import { useAuthStore } from '../../src/store/authStore';
 import { t } from '../../src/i18n';
 import { useBookingStore } from '../../src/store/bookingStore';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function CustomerProfile() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const user = useAuthStore((s) => s.user);
   const bookings = useBookingStore((s) => s.bookings);
   const myBookings = bookings.filter((b) => b.customerId === user?.id);
@@ -23,7 +25,7 @@ export default function CustomerProfile() {
         <Avatar emoji={user?.avatar || '👤'} size={72} style={styles.avatar} />
         <Text style={[typography.h1, { color: colors.text }]}>{user?.name}</Text>
         <View style={styles.badgeRow}>
-          <Badge label="Member" color={colors.accent} icon={<MaterialCommunityIcons name="handshake" size={12} color={colors.accent} />} />
+          <Badge label={t('profile.member')} color={colors.accent} icon={<MaterialCommunityIcons name="handshake" size={12} color={colors.accent} />} />
           <Badge label={t('home.verified')} color={colors.success} icon={<MaterialCommunityIcons name="shield-check" size={12} color={colors.success} />} />
         </View>
         <Text style={[typography.caption, { color: colors.textMuted }]}>
@@ -40,7 +42,7 @@ export default function CustomerProfile() {
 
       {/* Addresses (demo) */}
       <MenuGroup>
-        <MenuItem icon="map-marker-outline" label={t('profile.savedAddresses')} note="Home • 12, FC Road, Pune" onPress={() => null} />
+        <MenuItem icon="map-marker-outline" label={t('profile.savedAddresses')} note={t('profile.homeAddrNote')} onPress={() => null} />
         <MenuItem icon="help-circle-outline" label={t('profile.help')} onPress={() => null} />
       </MenuGroup>
 

@@ -58,15 +58,25 @@ export function ProfileMenu({ user }) {
           note={theme === 'dark' ? t('profile.darkOn') : t('profile.darkOff')}
           right={<Switch value={theme === 'dark'} onValueChange={(v) => setTheme(v ? 'dark' : 'light')} trackColor={{ true: colors.primary, false: colors.border }} />}
         />
-        <MenuItem icon="sync" label={t('profile.switchRole')} note="Customer / Worker" onPress={() => switchRole(user?.role === 'customer' ? 'worker' : 'customer')} />
+        {user?.isDemo ? (
+          <MenuItem icon="sync" label={t('profile.switchRole')} note={t('profile.switchRoleNote')} onPress={() => switchRole(user?.role === 'customer' ? 'worker' : 'customer')} />
+        ) : null}
         <MenuItem icon="alert-decagram" label={t('profile.emergency')} onPress={() => router.push('/emergency')} />
         {user?.role === 'worker' ? (
-          <MenuItem icon="shield-heart-outline" label={t('profile.insurance')} onPress={() => router.push('/(worker)/profile')} />
+          <MenuItem icon="shield-check-outline" label={t('profile.insurance')} onPress={() => router.push('/(worker)/profile')} />
+        ) : null}
+        {user?.role === 'worker' ? (
+          <MenuItem
+            icon="briefcase-edit-outline"
+            label={t('profile.myServices')}
+            note={t('tagAlong.editServicesNote')}
+            onPress={() => router.push('/worker-onboarding')}
+          />
         ) : null}
       </MenuGroup>
 
       <MenuGroup>
-        <MenuItem icon="information-outline" label={t('profile.about')} note="v1.0.0 • Hackathon prototype" onPress={() => null} />
+        <MenuItem icon="information-outline" label={t('profile.about')} note={t('profile.versionNote')} onPress={() => null} />
         <MenuItem icon="logout" label={t('profile.logout')} color={colors.danger} onPress={logout} />
       </MenuGroup>
 

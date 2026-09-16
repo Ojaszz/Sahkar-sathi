@@ -1,33 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Screen, EmptyState, Button, Avatar } from '../../src/components/ui';
+import { Screen, EmptyState, Avatar } from '../../src/components/ui';
 import { colors, radius, spacing, typography } from '../../src/theme';
 import { getWorker } from '../../src/data/workers';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useAuthStore } from '../../src/store/authStore';
-import { useChatStore } from '../../src/store/chatStore';
+import { useChatStore, chatKey } from '../../src/store/chatStore';
 import { t } from '../../src/i18n';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function CustomerChat() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const user = useAuthStore((s) => s.user);
   const bookings = useBookingStore((s) => s.bookings);
-  const [active, setActive] = useState(null); // worker object
+  const active = useChatStore((s) => s.active);
+  const msgs = useChatStore((s) => s.messagesByConv);
 
   // Build a list of distinct workers you have booked
   const bookedWorkers = [...new Map(
     bookings.filter((b) => b.customerId === user?.id).map((b) => [b.workerId, getWorker(b.workerId)])
   ).values()];
 
-  useEffect(() => {
-    if (bookedWorkers.length && !active) {
-      useChatStore.getState().setCurrentUser({ id: user?.id, name: user?.name, role: 'customer' });
-    }
-  }, [bookings]);
-
-  if (active) {
-    return <ChatThread worker={active} onBack={() => setActive(null)} />;
+  if (active && user) {
+    return (
+      <ChatThread
+        customerId={active.customerId}
+        workerId={active.workerId}
+        user={user}
+        onBack={() => useChatStore.getState().close()}
+      />
+    );
   }
 
   return (
@@ -42,49 +46,62 @@ export default function CustomerChat() {
           data={bookedWorkers}
           keyExtractor={(w) => w.id}
           contentContainerStyle={{ paddingBottom: 120 }}
-          renderItem={({ item }) => (
-            <Pressable style={styles.thread} onPress={() => setActive(item)}>
-              <Avatar emoji={item.avatar} size={50} online={item.available} />
-              <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          style={{ flex: 1 }}
+          renderItem={({ item }) => {
+            const preview = msgs[chatKey(user?.id, item.id)]?.at(-1)?.text || t(`categories.${item.service}`);
+            return (
+              <Pressable
+                style={styles.thread}
+                onPress={() => useChatStore.getState().openConversation(user?.id, item.id)}
+              >
+                <Avatar emoji={item.avatar} size={50} online={item.available} />
+                <View style={{ flex: 1 }}>
                   <Text style={typography.bodyBold}>{item.name}</Text>
-                  <Text style={[typography.small, { color: colors.textMuted }]}>10:2{Math.floor(Math.random() * 9)} AM</Text>
+                  <Text style={[typography.caption, { color: colors.textMuted }]} numberOfLines={1}>
+                    {preview}
+                  </Text>
                 </View>
-                <Text style={[typography.caption, { color: colors.textMuted }]}>{t(`categories.${item.service}`)}</Text>
-              </View>
-            </Pressable>
-          )}
+              </Pressable>
+            );
+          }}
         />
       )}
     </Screen>
   );
 }
 
-function ChatThread({ worker, onBack }) {
+function ChatThread({ customerId, workerId, user, onBack }) {
   const styles = makeStyles(colors);
-  const user = useAuthStore((s) => s.user);
-  const { activeConversation, sendMessage, openConversation } = useChatStore();
+  const worker = getWorker(workerId);
+  const messages = useChatStore((s) => s.messagesByConv[chatKey(customerId, workerId)]) || [];
   const [text, setText] = useState('');
 
+  // Pre-fed questions the customer can ask the worker (one-tap send).
+  const quickQuestions = [0, 1, 2, 3, 4].map((i) => t(`chat.suggestions.customer${i}`));
+
   useEffect(() => {
-    useChatStore.getState().setCurrentUser({ id: user?.id, name: user?.name, role: 'customer' });
-    openConversation(user?.id, worker.id);
-  }, []);
+    useChatStore.getState().setCurrentUser({ id: user?.id, name: user?.name, role: user?.role || 'customer' });
+    useChatStore.getState().setActive({ customerId, workerId });
+  }, [customerId, workerId]);
 
-  const messages = activeConversation?.messages || [];
-  const greeting =
-    messages.length === 0
-      ? [
-          { id: 'a', senderId: worker.id, text: `Namaste! I'm ${worker.name}, your ${t(`categories.${worker.service}`)}. How can I help? 🙏`, time: new Date().toISOString() },
-          { id: 'b', senderId: user?.id, text: `Hi ${worker.name}, I need help with ${t(`categories.${worker.service}`)} at my place.`, time: new Date().toISOString() },
-        ]
-      : messages;
+  if (!worker) return null;
 
-  const send = async () => {
-  const styles = makeStyles(colors);
+  const send = () => {
     if (!text.trim()) return;
-    await sendMessage(text.trim());
+    useChatStore.getState().send(customerId, workerId, text.trim());
     setText('');
+  };
+
+  const sendQuick = (question) => {
+    useChatStore.getState().send(customerId, workerId, question);
+  };
+
+  const timeOf = (t) => {
+    try {
+      return new Date(t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    } catch {
+      return '';
+    }
   };
 
   return (
@@ -101,22 +118,45 @@ function ChatThread({ worker, onBack }) {
         </View>
       </View>
 
-      <FlatList
-        style={{ flex: 1 }}
-        data={greeting}
-        keyExtractor={(m) => m.id}
-        contentContainerStyle={{ padding: spacing.lg, gap: spacing.sm }}
-        renderItem={({ item }) => {
-          const mine = item.senderId === user?.id;
-          return (
-            <View style={[styles.bubbleWrap, mine ? styles.bubbleMineWrap : styles.bubbleTheirsWrap]}>
-              <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
-                <Text style={[typography.body, { color: mine ? colors.white : colors.text }]}>{item.text}</Text>
+      {messages.length === 0 ? (
+        <View style={styles.threadEmpty}>
+          <Text style={[typography.caption, { color: colors.textMuted }]}>{t('chat.sayHi')}</Text>
+        </View>
+      ) : (
+        <FlatList
+          style={{ flex: 1 }}
+          data={messages}
+          keyExtractor={(m) => m.id}
+          contentContainerStyle={{ padding: spacing.lg, gap: spacing.sm }}
+          renderItem={({ item }) => {
+            const mine = item.senderId === user?.id;
+            return (
+              <View style={[styles.bubbleWrap, mine ? styles.bubbleMineWrap : styles.bubbleTheirsWrap]}>
+                <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
+                  <Text style={[typography.body, { color: mine ? colors.white : colors.text }]}>{item.text}</Text>
+                  <Text style={[typography.small, mine ? { color: colors.white + '99' } : { color: colors.textMuted }]}>
+                    {timeOf(item.time)}
+                  </Text>
+                </View>
               </View>
-            </View>
-          );
-        }}
-      />
+            );
+          }}
+        />
+      )}
+
+      {/* Quick questions — one tap sends the pre-fed question to the worker */}
+      <View style={styles.quickWrap}>
+        <Text style={[typography.small, { color: colors.textMuted, marginBottom: 4 }]}>
+          {t('chat.suggestions.customerTitle')}
+        </Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {quickQuestions.map((question) => (
+            <Pressable key={question} style={styles.quickChip} onPress={() => sendQuick(question)}>
+              <Text style={[typography.captionMedium, { color: colors.primary }]}>{question}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.inputBar}>
@@ -158,6 +198,17 @@ const makeStyles = (colors) => StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     backgroundColor: colors.surface,
+  },
+  threadEmpty: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  quickWrap: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.xs, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border },
+  quickChip: {
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.round,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginRight: spacing.sm,
   },
   bubbleWrap: { maxWidth: '80%' },
   bubbleMineWrap: { alignSelf: 'flex-end' },

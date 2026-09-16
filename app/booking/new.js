@@ -2,19 +2,22 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Screen, Button, Input, Card, Modal, CoopCallout } from '../../src/components/ui';
+import { Screen, Button, Input, Card, Modal, CoopCallout, AreaPicker } from '../../src/components/ui';
 import Avatar from '../../src/components/ui/Avatar';
 import { colors, radius, spacing, typography } from '../../src/theme';
 import { getWorker } from '../../src/data/workers';
 import { getService } from '../../src/data/services';
 import { formatINR } from '../../src/utils/format';
 import { TIME_SLOTS, USER_LOCATION } from '../../src/utils/constants';
+import { areaByKey } from '../../src/utils/puneAreas';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { t } from '../../src/i18n';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function NewBookingScreen() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const { workerId } = useLocalSearchParams();
   const router = useRouter();
   const worker = getWorker(workerId);
@@ -24,8 +27,23 @@ export default function NewBookingScreen() {
   const [date, setDate] = useState('2026-09-07');
   const [time, setTime] = useState('10:00 AM');
   const [issue, setIssue] = useState('');
-  const [address, setAddress] = useState(user?.location || '');
+  // Service address = area menu (+ auto pincode) + optional door/premise line.
+  const [area, setArea] = useState('FC Road');
+  const [door, setDoor] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Keep the old `address` shape (full line) derived so nothing downstream changes.
+  const address = useMemo(
+    () => {
+      const a = areaByKey(area);
+      const parts = [];
+      if (door.trim()) parts.push(door.trim());
+      parts.push(area);
+      if (a) parts.push(`Pune ${a.pincode}`);
+      return parts.join(', ');
+    },
+    [door, area]
+  );
 
   const dates = useMemo(() => {
   const styles = makeStyles(colors);
@@ -46,7 +64,7 @@ export default function NewBookingScreen() {
   const confirm = async () => {
   const styles = makeStyles(colors);
     if (!worker.available) {
-      Alert.alert(t('home.offline'), 'This worker is currently offline. Please pick an available worker.');
+      Alert.alert(t('home.offline'), t('bookings.workerOffline'));
       return;
     }
     await useBookingStore.getState().createBooking({
@@ -115,18 +133,31 @@ export default function NewBookingScreen() {
         placeholder={t('booking.issuePlaceholder')}
         multiline
       />
-      <Input
-        label={t('booking.address')}
-        value={address}
-        onChangeText={setAddress}
-        icon={<MaterialCommunityIcons name="map-marker-outline" size={20} color={colors.textMuted} />}
+      <AreaPicker
+        label={t('bookings.selectArea')}
+        value={area}
+        onChange={(a, pin) => setArea(a)}
+        placeholder={t('bookings.chooseArea')}
       />
+      <Input
+        label={t('bookings.doorLabel')}
+        value={door}
+        onChangeText={setDoor}
+        placeholder={t('bookings.doorPlaceholder')}
+        icon={<MaterialCommunityIcons name="home-outline" size={20} color={colors.textMuted} />}
+      />
+      {address ? (
+        <View style={styles.previewRow}>
+          <MaterialCommunityIcons name="map-marker-check" size={16} color={colors.success} />
+          <Text style={[typography.small, { color: colors.success }]}>{address}</Text>
+        </View>
+      ) : null}
 
       {/* Price summary */}
       <Text style={[typography.h3, styles.label]}>{t('booking.priceSummary')}</Text>
       <Card>
         <Row label={t('booking.basePrice')} value={formatINR(worker.price)} />
-        <Row label={t('booking.coopFee')} value={`+ ${formatINR(coopFee)}`} muted note="fair wage & welfare" />
+        <Row label={t('booking.coopFee')} value={`+ ${formatINR(coopFee)}`} muted note={t('booking.coopFeeShort')} />
         <View style={styles.divider} />
         <Row label={t('booking.estimatedTotal')} value={formatINR(total)} bold />
       </Card>
@@ -135,7 +166,7 @@ export default function NewBookingScreen() {
         style={styles.callout}
         icon="hand-coin"
         title={t('onboard.fairWages')}
-        note="8% cooperative fee supports worker insurance & welfare, not platform profit."
+        note={t('booking.coopFeeNote')}
       />
 
       <Button title={t('booking.confirmBooking')} onPress={confirm} size="lg" style={{ marginTop: spacing.lg }} />
@@ -173,6 +204,7 @@ function Row({ label, value, muted, bold, note }) {
 
 const makeStyles = (colors) => StyleSheet.create({
   summary: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginTop: spacing.md },
+  previewRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: -spacing.sm, marginBottom: spacing.md },
   label: { marginTop: spacing.xl, marginBottom: spacing.md },
   dateRow: { flexDirection: 'row', gap: spacing.sm },
   dateChip: {

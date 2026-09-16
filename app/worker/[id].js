@@ -5,20 +5,25 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen, Button, Badge, CoopCallout, RatingBubble, StarRow } from '../../src/components/ui';
 import Avatar from '../../src/components/ui/Avatar';
 import { colors, radius, spacing, typography } from '../../src/theme';
-import { getWorker } from '../../src/data/workers';
 import { getService } from '../../src/data/services';
 import { reviewsForWorker } from '../../src/data/reviews';
 import { formatINR, formatDate } from '../../src/utils/format';
 import { INSURANCE_POLICIES } from '../../src/utils/constants';
 import { useChatStore } from '../../src/store/chatStore';
 import { useAuthStore } from '../../src/store/authStore';
+import { useWorkerStore } from '../../src/store/workerStore';
+import { useWorkerDirectoryStore } from '../../src/store/workerDirectoryStore';
 import { t } from '../../src/i18n';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function WorkerDetailScreen() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const worker = getWorker(id);
+  // Resolve BOTH the catalogue and registered-worker halves.
+  const worker = useWorkerStore((s) => s.getWorker(id));
+  useWorkerDirectoryStore((s) => s.profiles); // re-resolve when profiles land
   const service = getService(worker.service);
   const reviews = reviewsForWorker(worker.id);
   const user = useAuthStore((s) => s.user);
@@ -43,7 +48,7 @@ export default function WorkerDetailScreen() {
             <MaterialCommunityIcons name="shield-check" size={20} color={colors.success} />
           </View>
           <Text style={[typography.bodyMedium, { color: colors.textSecondary }]}>
-            {t(`categories.${worker.service}`)} • {worker.yearsExp} yrs
+            {t(`categories.${worker.service}`)} • {expLabel(worker.yearsExp)}
           </Text>
 
           <View style={styles.badges}>
@@ -98,7 +103,7 @@ export default function WorkerDetailScreen() {
           {/* Insurance & welfare */}
           <Section label={t('worker.insurance')}>
             <View style={styles.insuranceRow}>
-              <MaterialCommunityIcons name="shield-heart-outline" size={18} color={colors.success} />
+              <MaterialCommunityIcons name="shield-check-outline" size={18} color={colors.success} />
               <View style={{ flex: 1 }}>
                 <Text style={[typography.captionMedium, { color: colors.text }]}>{t('worker.insuranceCover')}: {worker.insuranceCover}</Text>
                 <Text style={[typography.small, { color: colors.textMuted }]}>{INSURANCE_POLICIES.map((p) => p.name).join(' • ')}</Text>
@@ -145,6 +150,15 @@ export default function WorkerDetailScreen() {
       </View>
     </Screen>
   );
+}
+
+// Catalogue workers store a numeric year count; registered workers store the label
+// they picked in onboarding ("1–3 years"). Render both without the " yrs" suffix
+// when the label already carries it.
+function expLabel(exp) {
+  if (typeof exp === 'number') return `${exp} yrs`;
+  if (typeof exp === 'string' && exp.includes('year')) return exp;
+  return exp ? `${exp} yrs` : 'New member';
 }
 
 function Stat({ label, value, icon, color }) {

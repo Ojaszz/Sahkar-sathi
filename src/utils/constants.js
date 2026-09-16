@@ -13,11 +13,11 @@ export const DEMO_USERS = {
   },
   worker: {
     id: 'w1',
-    name: 'Rajesh Kumar',
+    name: 'Vardhan',
     phone: '+91 98450 12345',
     role: 'worker',
-    email: 'rajesh@coop.in',
-    location: 'Shivajinagar, Pune',
+    email: 'vardhan@coop.in',
+    location: 'FC Road, Pune',
     avatar: '👨‍🔧',
   },
 };
@@ -29,6 +29,13 @@ export const USER_LOCATION = [18.5204, 73.8567];
 
 // Cooperative specifics
 export const COOP_FEE_PERCENT = 8;
+
+// Emergency pay bonus — workers who accept an SOS get 20 % extra.
+export const EMERGENCY_PAY_MULTIPLIER = 1.2;
+
+// Tag-along loop: after this many COMPLETED shared jobs the junior "graduates" —
+// the feature closes (no more requests) because their rating stands on its own.
+export const TAG_ALONG_LIMIT = 10;
 
 // Booking time slots
 export const TIME_SLOTS = [

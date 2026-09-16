@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Alert, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,24 +11,46 @@ import { formatINR, formatDate } from '../../src/utils/format';
 import { customerLocationFor } from '../../src/utils/geo';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useAuthStore } from '../../src/store/authStore';
+import { useSyncStore } from '../../src/store/syncStore';
+import { useChatStore } from '../../src/store/chatStore';
+import { useDeclineStore } from '../../src/store/declineStore';
 import { t } from '../../src/i18n';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function BookingDetailScreen() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const { getById, setStatus, cancelBooking, addReview } = useBookingStore();
+  const acceptBooking = useSyncStore((s) => s.acceptBooking);
   const booking = getById(id);
   const [showReview, setShowReview] = useState(false);
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState('');
+  const openedTrackRef = useRef(null);
+
+  // LIVE demo moment: the instant the worker flips the job to inProgress, the
+  // customer phone auto-opens the tracking screen (poll merges the row in ~1.5s).
+  useEffect(() => {
+    const bid = String(id);
+    if (
+      booking?.status === 'inProgress' &&
+      booking.isLive &&
+      user?.role !== 'worker' &&
+      openedTrackRef.current !== bid
+    ) {
+      openedTrackRef.current = bid;
+      router.replace(`/track/${bid}`);
+    }
+  }, [booking?.status, booking?.id]);
 
   if (!booking) {
     return (
       <Screen>
-        <Text style={[typography.h2, styles.missing]}>Booking not found</Text>
-        <Button title="Back" variant="ghost" onPress={() => router.back()} />
+        <Text style={[typography.h2, styles.missing]}>{t('bookings.bookingNotFound')}</Text>
+        <Button title={t('common.back')} variant="ghost" onPress={() => router.back()} />
       </Screen>
     );
   }
@@ -39,7 +61,7 @@ export default function BookingDetailScreen() {
 
   const doCancel = () => {
   const styles = makeStyles(colors);
-    Alert.alert(t('bookings.cancelBooking'), 'Cancel this booking?', [
+    Alert.alert(t('bookings.cancelBooking'), t('bookings.cancelBookingQ'), [
       { text: t('common.no'), style: 'cancel' },
       {
         text: t('common.yes'),
@@ -54,7 +76,7 @@ export default function BookingDetailScreen() {
 
   const submitReview = async () => {
   const styles = makeStyles(colors);
-    await addReview(booking.id, rating, reviewText.trim() || 'Great service!');
+    await addReview(booking.id, rating, reviewText.trim() || t('bookings.greatService'));
     setShowReview(false);
     router.back();
   };
@@ -97,7 +119,7 @@ export default function BookingDetailScreen() {
         <DetailRow icon="calendar" label={t('booking.date')} value={formatDate(booking.date)} />
         <DetailRow icon="clock-outline" label={t('booking.time')} value={booking.time} />
         <DetailRow icon="map-marker-outline" label={t('booking.address')} value={booking.address} />
-        <DetailRow icon="text-box-outline" label="Issue" value={booking.issue} />
+        <DetailRow icon="text-box-outline" label={t('booking.issue')} value={booking.issue} />
         <DetailRow icon="flag-outline" label={t('booking.status.requested')} value={booking.id.toUpperCase()} />
       </Card>
 
@@ -121,7 +143,7 @@ export default function BookingDetailScreen() {
       <CoopCallout
         icon="hand-coin"
         title={t('onboard.fairWages')}
-        note={`${formatINR(booking.coopFee)} (${t('workerApp.cooperativeFee')}) supports worker insurance & welfare.`}
+        note={`${formatINR(booking.coopFee)} (${t('workerApp.cooperativeFee')}) ${t('bookings.coopNote')}`}
         style={{ marginTop: spacing.md }}
       />
 
@@ -156,8 +178,39 @@ export default function BookingDetailScreen() {
 
         {!isCustomer && booking.status === 'requested' && (
           <View style={styles.workerActions}>
-            <Button title={t('workerApp.reject')} variant="dangerOutline" style={{ flex: 1 }} onPress={() => { setStatus(booking.id, 'cancelled'); router.back(); }} />
-            <Button title={t('workerApp.accept')} style={{ flex: 1 }} onPress={() => { setStatus(booking.id, 'confirmed'); router.back(); }} />
+            <Button
+              title={t('workerApp.reject')}
+              variant="dangerOutline"
+              style={{ flex: 1 }}
+              onPress={() => {
+                // Personal pass — book stays 'requested' for others, just dropped from this worker's list.
+                useDeclineStore.getState().decline(user?.id || booking.workerId || 'w1', booking.id);
+                router.back();
+              }}
+            />
+            <Button
+              title={t('workerApp.accept')}
+              style={{ flex: 1 }}
+              onPress={async () => {
+                const res = await acceptBooking(booking.id, user?.id || 'w1', user?.name || 'Worker');
+                if (res.ok && res.booking) {
+                  useChatStore.getState().greetFromWorker({
+                    customerId: res.booking.customerId,
+                    workerId: res.booking.workerId,
+                    workerName: res.booking.workerName,
+                    customerName: res.booking.customerName,
+                    service: res.booking.service,
+                  });
+                  router.back();
+                } else if (res.taken) {
+                  Alert.alert(t('workerApp.acceptLost'), t('workerApp.takenFirst'));
+                } else if (res.error) {
+                  Alert.alert(t('bookings.couldNotAccept'), res.error);
+                } else {
+                  Alert.alert(t('workerApp.acceptLost'), t('workerApp.takenFirst'));
+                }
+              }}
+            />
           </View>
         )}
         {!isCustomer && booking.status === 'confirmed' && (
@@ -184,7 +237,7 @@ export default function BookingDetailScreen() {
         <View style={{ alignItems: 'center', gap: spacing.lg }}>
           <StarInput value={rating} onChange={setRating} />
           <Input
-            label="Your review"
+            label={t('bookings.yourReview')}
             value={reviewText}
             onChangeText={setReviewText}
             placeholder={t('bookings.writeReview')}

@@ -10,15 +10,19 @@ import { colors, spacing, radius, typography } from '../../src/theme';
 import { SERVICES } from '../../src/data/services';
 import { useAuthStore } from '../../src/store/authStore';
 import { useWorkerStore } from '../../src/store/workerStore';
+import { useWorkerDirectoryStore } from '../../src/store/workerDirectoryStore';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useNotificationsStore } from '../../src/store/notificationsStore';
 import { t } from '../../src/i18n';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 export default function CustomerHome() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
+  useWorkerDirectoryStore((s) => s.profiles); // re-render when registered workers land
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
-  const items = useNotificationsStore((s) => s.items);
+  const unreadCount = useNotificationsStore((s) => s.unreadCount);
   const refreshNotifs = useNotificationsStore((s) => s.refresh);
   const setQuery = useWorkerStore((s) => s.setQuery);
   const setCategory = useWorkerStore((s) => s.setCategory);
@@ -28,7 +32,10 @@ export default function CustomerHome() {
 
   useEffect(() => {
     refreshNotifs(user?.id, user?.role);
-  }, []);
+    // Re-derive notifications when bookings change (syncStore polls every ~1.5 s)
+    const unsub = useBookingStore.subscribe(() => refreshNotifs(user?.id, user?.role));
+    return unsub;
+  }, [user?.id]);
 
   // featured = top rated, available
   const featured = visibleWorkers()
@@ -41,13 +48,11 @@ export default function CustomerHome() {
   }, []);
 
   const greet = () => {
-  const styles = makeStyles(colors);
     const h = new Date().getHours();
     return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   };
 
   const openCategory = (id) => {
-  const styles = makeStyles(colors);
     setCategory(id);
     setSortBy('rating');
     setQuery('');
@@ -67,7 +72,11 @@ export default function CustomerHome() {
         <View style={styles.headerIcons}>
           <Pressable onPress={() => router.push('/notifications')} style={styles.notifBtn} hitSlop={8}>
             <MaterialCommunityIcons name="bell-outline" size={22} color={colors.text} />
-            {items.length > 0 ? <View style={styles.notifDot} /> : null}
+            {unreadCount > 0 ? (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>{unreadCount}</Text>
+              </View>
+            ) : null}
           </Pressable>
           <Pressable onPress={() => router.push('/(customer)/profile')} style={styles.avatarBtn}>
             <Avatar emoji={user?.avatar || '👤'} size={44} />
@@ -165,7 +174,8 @@ const makeStyles = (colors) => StyleSheet.create({
   headerLeft: { flex: 1, gap: 2 },
   headerIcons: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   notifBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
-  notifDot: { position: 'absolute', top: 9, right: 9, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.danger },
+  notifBadge: { position: 'absolute', top: 2, right: 2, backgroundColor: colors.danger, borderRadius: 9, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
+  notifBadgeText: { color: colors.white, fontSize: 9, fontWeight: '700' },
   avatarBtn: { borderWidth: 2, borderColor: colors.primary, borderRadius: 24 },
   bannerRow: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
   emergency: {

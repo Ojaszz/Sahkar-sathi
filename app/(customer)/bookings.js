@@ -7,6 +7,7 @@ import { colors, radius, spacing, typography } from '../../src/theme';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { t } from '../../src/i18n';
+import { useSettingsStore } from '../../src/store/settingsStore';
 
 const TABS = [
   { key: 'upcoming', label: 'Upcoming' },
@@ -16,6 +17,7 @@ const TABS = [
 
 export default function CustomerBookings() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const { bookings, loadBookings } = useBookingStore();
@@ -31,7 +33,6 @@ export default function CustomerBookings() {
   );
 
   const filtered = useMemo(() => {
-  const styles = makeStyles(colors);
     if (tab === 'upcoming') return myBookings.filter((b) => ['requested', 'confirmed', 'inProgress'].includes(b.status));
     if (tab === 'completed') return myBookings.filter((b) => b.status === 'completed');
     return myBookings.filter((b) => b.status === 'cancelled');
@@ -65,6 +66,7 @@ export default function CustomerBookings() {
             renderItem={({ item }) => <BookingCard booking={item} />}
             contentContainerStyle={{ paddingBottom: 120, paddingTop: spacing.md }}
             showsVerticalScrollIndicator={false}
+            style={{ flex: 1 }}
             ListEmptyComponent={
               <EmptyState icon="calendar-blank" title={t('bookings.empty')} note={t('bookings.emptyNote')} />
             }

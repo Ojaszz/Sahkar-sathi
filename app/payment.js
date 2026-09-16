@@ -7,6 +7,7 @@ import { colors, radius, spacing, typography } from '../src/theme';
 import { formatINR } from '../src/utils/format';
 import { useBookingStore } from '../src/store/bookingStore';
 import { t } from '../src/i18n';
+import { useSettingsStore } from '../src/store/settingsStore';
 
 const METHODS = [
   { key: 'upi', icon: 'qrcode-scan', color: '#6C5CE7' },
@@ -16,6 +17,7 @@ const METHODS = [
 
 export default function PaymentScreen() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // theme re-render
   const { bookingId } = useLocalSearchParams();
   const router = useRouter();
   const booking = useBookingStore((s) => s.bookings.find((b) => b.id === bookingId));
@@ -27,7 +29,7 @@ export default function PaymentScreen() {
   if (!booking) {
     return (
       <Screen>
-        <Text style={[typography.h2, { textAlign: 'center', marginTop: 80 }]}>Booking not found</Text>
+        <Text style={[typography.h2, { textAlign: 'center', marginTop: 80 }]}>{t('bookings.bookingNotFound')}</Text>
       </Screen>
     );
   }

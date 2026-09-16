@@ -15,6 +15,7 @@ const ICONS = {
 
 export default function CustomerLayout() {
   const language = useSettingsStore((s) => s.language);
+  const theme = useSettingsStore((s) => s.theme); // re-render tint/bar on toggle
 
   return (
     <Tabs

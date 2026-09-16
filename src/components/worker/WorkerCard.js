@@ -31,7 +31,7 @@ export default function WorkerCard({ worker, onPress }) {
           <MaterialCommunityIcons name="shield-check" size={16} color={colors.success} />
         </View>
         <Text style={[typography.caption, { color: colors.textSecondary }]}>
-          {t(`categories.${worker.service}`)} • {worker.yearsExp} yrs
+          {t(`categories.${worker.service}`)} • {expLabel(worker.yearsExp)}
         </Text>
         <View style={styles.metaRow}>
           <RatingBubble rating={worker.rating} count={worker.reviewsCount} />
@@ -55,6 +55,15 @@ export default function WorkerCard({ worker, onPress }) {
       </View>
     </Pressable>
   );
+}
+
+// Catalogue workers store a numeric year count; registered workers store the label
+// they picked in onboarding ("1–3 years"). Render both without the " yrs" suffix
+// when the label already carries it.
+function expLabel(exp) {
+  if (typeof exp === 'number') return `${exp} yrs`;
+  if (typeof exp === 'string' && exp.includes('year')) return exp;
+  return exp ? `${exp} yrs` : 'New member';
 }
 
 const makeStyles = (colors) => StyleSheet.create({

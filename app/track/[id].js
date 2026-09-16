@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, radius, spacing, typography } from '../../src/theme';
+import { useSettingsStore } from '../../src/store/settingsStore';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useTrackingStore } from '../../src/store/trackingStore';
 import { getWorker } from '../../src/data/workers';
@@ -14,6 +15,7 @@ import { t } from '../../src/i18n';
 
 export default function TrackScreen() {
   const styles = makeStyles(colors);
+  useSettingsStore((s) => s.theme); // full-screen map bypasses Screen; re-render on toggle
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const rawId = useLocalSearchParams().id;
@@ -57,7 +59,7 @@ export default function TrackScreen() {
   if (!booking || !worker || !customer) {
     return (
       <SafeAreaView style={styles.safe}>
-        <Text style={[typography.h2, { color: colors.text }]}>Booking not found</Text>
+        <Text style={[typography.h2, { color: colors.text }]}>{t('bookings.bookingNotFound')}</Text>
       </SafeAreaView>
     );
   }
