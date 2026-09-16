@@ -167,13 +167,6 @@ export const useTagAlongStore = create((set, get) => ({
     return get().rows.filter((r) => r.juniorId === juniorId && r.status === 'completed').length;
   },
 
-  // What the junior side shows on screen, keyed by mentor id: the tag-along row
-  // this phone (as the junior) has with a given mentor, or null if none yet.
-  statusWithMentor(mentorId) {
-    const mine = get().rows.find((r) => r.mentorId === mentorId);
-    return mine || null;
-  },
-
   reset() {
     set({ rows: [] });
   },

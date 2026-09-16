@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen, Button, Card, Modal, StatusBadge, CoopCallout, StarInput, Input } from '../../src/components/ui';
 import Avatar from '../../src/components/ui/Avatar';
-import { colors, spacing, typography } from '../../src/theme';
+import { colors, radius, spacing, typography } from '../../src/theme';
 import { getWorker } from '../../src/data/workers';
 import { getService } from '../../src/data/services';
 import { formatINR, formatDate } from '../../src/utils/format';
