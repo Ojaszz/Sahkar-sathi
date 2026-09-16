@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "Sahkar Sathi",
+    "slug": "sahkar-sathi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "sahkarsathi",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Sahkar Sathi to use your location to find nearby cooperative workers."
+        }
+      ],
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#0B5D3B"
+        }
+      ],
+      "expo-secure-store",
+      "expo-image"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sahkarsathi.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0B5D3B"
+      },
+      "package": "com.sahkarsathi.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

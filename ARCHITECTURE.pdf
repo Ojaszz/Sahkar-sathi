@@ -1,0 +1,724 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Length 7265 >>
+stream
+BT /F1 20.0 Tf 0.04 0.09 0.07 rg 48.0 762.0 Td (Sahkar Sathi - System Architecture) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 735.5 Td (SIH 2025 - Problem Statement #26089 - Cooperative Gig-Services Platform) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 717.2 m 547.0 717.2 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 694.2 Td (1 - High-Level Overview) Tj ET
+0.95 0.95 0.95 rg 42.0 369.2 511.0 311.6 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 369.2 511.0 311.6 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 655.2 Td (+---------------------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 645.6 Td (|                         SAHKAR SATHI                                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 636.0 Td (|              Cooperative Gig-Services Platform                       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 626.4 Td (+---------------------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 616.8 Td (|                                                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 607.2 Td (|   +-----------+    +-----------+    +-----------+                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 597.6 Td (|   | CUSTOMER  |    |  WORKER   |    |   ADMIN   |     3 Roles      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 588.0 Td (|   +-----+-----+    +-----+-----+    +-----+-----+                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 578.4 Td (|         |                |                |                          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 568.8 Td (|         +----------------+----------------+                          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 559.2 Td (|                                                                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 549.6 Td (|              +----------------------+                                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 540.0 Td (|              |   React Native +     |                                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 530.4 Td (|              |   Expo SDK 57        |    Cross-platform mobile      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 520.8 Td (|              |   \(Expo Go\)          |                                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 511.2 Td (|              +----------+-----------+                                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 501.6 Td (|                         |                                            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 492.0 Td (|         +---------------+-------------------+                        |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 482.4 Td (|                                                                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 472.8 Td (|  +-------------+ +------------+   +--------------+                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 463.2 Td (|  | Zustand     | |  Mock API  |   |  react-native |                 |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 453.6 Td (|  | State Mgmt  | |  \(JSON\)    |   |  -maps        |                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 444.0 Td (|  +------+------+ +-----+------+   +------+-------+                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 434.4 Td (|         |              |                  |                           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 424.8 Td (|         +--------------+------------------+                          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 415.2 Td (|                                                                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 405.6 Td (|              +---------------------+                                 |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 396.0 Td (|              |  AsyncStorage       |    Persistence layer            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 386.4 Td (|              |  \(device-local\)     |                                 |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 376.8 Td (|              +---------------------+                                 |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 367.2 Td (+---------------------------------------------------------------------+) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 349.1 m 547.0 349.1 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 326.1 Td (2 - Tech Stack) Tj ET
+0.043 0.094 0.067 rg 48.0 296.2 499.0 18.4 re f
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 51.0 294.6 Td (Layer) Tj ET
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 217.3 294.6 Td (Technology) Tj ET
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 383.7 294.6 Td (Why) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 296.2 m 547.0 296.2 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 276.2 Td (Runtime) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 276.2 Td (Expo SDK 57 + Expo Go) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 276.2 Td (Zero native build needed; instant QR-code) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 265.8 Td (deploy) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 267.4 m 547.0 267.4 l S
+0.96 0.96 0.96 rg 48.0 249.0 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 247.4 Td (Framework) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 247.4 Td (React Native \(Expo Router 7\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 247.4 Td (File-based routing, type-safe params) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 249.0 m 547.0 249.0 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 229.0 Td (State) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 229.0 Td (Zustand + AsyncStorage persistence) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 229.0 Td (Lightweight, no boilerplate, survives app) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 218.6 Td (restart) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 220.2 m 547.0 220.2 l S
+0.96 0.96 0.96 rg 48.0 201.8 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 200.2 Td (Maps) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 200.2 Td (react-native-maps v1.27) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 200.2 Td (MapView, Marker, Polyline - road tracking) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 201.8 m 547.0 201.8 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 181.8 Td (i18n) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 181.8 Td (Custom JSON dictionary \(EN / HI / MR\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 181.8 Td (Trilingual out-of-the-box, no heavy lib) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 183.4 m 547.0 183.4 l S
+0.96 0.96 0.96 rg 48.0 154.6 499.0 28.8 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 163.4 Td (Theming) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 163.4 Td (Mutable singleton colors +) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 153.0 Td (makeStyles\(colors\) factory) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 153.0 Td (Dark/light mode via full-tree remount) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 154.6 m 547.0 154.6 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 134.6 Td (Navigation) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 134.6 Td (Expo Router file-based <Stack>) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 134.6 Td (Role-based route groups, fullScreenModal) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 124.2 Td (for tracking) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 125.8 m 547.0 125.8 l S
+0.5 0.5 0.5 RG 1.5 w 48.0 111.8 m 547.0 111.8 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 88.8 Td (3 - Frontend Architecture) Tj ET
+endstream
+endobj
+3 0 obj
+<< /Length 5489 >>
+stream
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 769.5 Td (3.1 Role-Based Route Groups \(Expo Router\)) Tj ET
+0.95 0.95 0.95 rg 42.0 503.2 511.0 254.0 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 503.2 511.0 254.0 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 731.8 Td (app/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 722.1 Td (+-- _layout.js                      Root Stack \(auth gate, theme provider\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 712.5 Td (+-- index.js                        Splash / role picker) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 702.9 Td (+-- auth/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 693.3 Td (|   +-- login.js                    Phone + role selection) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 683.7 Td (|   +-- register.js                 Name, phone, city \(Pune default\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 674.1 Td (+-- \(customer\)/                     Customer tab group) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 664.5 Td (|   +-- _layout.js                  Bottom tabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 654.9 Td (|   +-- index.js                    Home / dashboard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 645.3 Td (|   +-- search.js                   Service search + map view) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 635.7 Td (|   +-- bookings.js                 Booking list) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 626.1 Td (|   +-- profile.js                  Profile + saved addresses) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 616.5 Td (|   +-- booking/[id].js             Booking detail \(track button\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 606.9 Td (+-- \(worker\)/                       Worker tab group) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 597.3 Td (|   +-- _layout.js                  Bottom tabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 587.7 Td (|   +-- index.js                    Active jobs + earnings) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 578.1 Td (|   +-- jobs.js                     Available jobs feed) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 568.5 Td (|   +-- profile.js                  Worker profile + rating) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 558.9 Td (+-- \(admin\)/                        Admin tab group) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 549.3 Td (|   +-- _layout.js                  Bottom tabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 539.7 Td (|   +-- index.js                    Dashboard overview) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 530.1 Td (|   +-- analytics.js                Revenue + workforce coverage) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 520.5 Td (|   +-- workers.js                  Worker management) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 510.9 Td (+-- track/[id].js                   Live tracking \(fullScreenModal\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 501.3 Td (+-- emergency.js                    SOS / emergency screen) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 478.7 Td (3.2 Component Hierarchy) Tj ET
+0.95 0.95 0.95 rg 42.0 241.3 511.0 225.2 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 241.3 511.0 225.2 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 441.0 Td (App) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 431.4 Td (+-- ThemeProvider \(key={theme} forces full remount\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 421.8 Td (|   +-- AuthGate \(checks authStore.isLoggedIn\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 412.2 Td (|       +-- RoleSwitcher \(floating pill - demo convenience\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 402.6 Td (|           +-- Stack.Navigator) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 393.0 Td (|               +-- AuthStack \(login, register\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 383.4 Td (|               +-- RoleStack) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 373.8 Td (|                   +-- CustomerTabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 364.2 Td (|                   |   +-- HomeScreen   Card, Badge, ServiceGrid) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 354.6 Td (|                   |   +-- SearchScreen   MapView, ServiceCard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 345.0 Td (|                   |   +-- BookingsScreen   BookingCard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 335.4 Td (|                   |   +-- ProfileScreen   Avatar, StatBox, MenuGroup) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 325.8 Td (|                   +-- WorkerTabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 316.2 Td (|                   |   +-- Dashboard   EarningsCard, JobQueue) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 306.6 Td (|                   |   +-- JobsScreen   JobCard, AcceptButton) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 297.0 Td (|                   +-- AdminTabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 287.4 Td (|                   |   +-- Dashboard   MetricCard, TrendChart) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 277.8 Td (|                   |   +-- Analytics   ZoneGrid, RevenueBreakdown) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 268.2 Td (|                   |   +-- Workers   WorkerList, WorkerCard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 258.6 Td (|                   +-- TrackScreen \(fullScreenModal\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 249.0 Td (|                       +-- MapView \(road polyline, markers\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 239.4 Td (|                       +-- TrackingCard \(live ETA, distance\)) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 221.3 m 547.0 221.3 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 198.3 Td (4 - State Management Architecture) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 174.3 Td (4.1 Zustand Stores) Tj ET
+endstream
+endobj
+4 0 obj
+<< /Length 5154 >>
+stream
+0.95 0.95 0.95 rg 42.0 574.0 511.0 206.0 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 574.0 511.0 206.0 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 754.5 Td (+-------------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 744.9 Td (|                    ZUSTAND STORES                            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 735.3 Td (+------------------+------------------+------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 725.7 Td (|   authStore      |  bookingStore    |   trackingStore        |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 716.1 Td (|                  |                  |                        |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 706.5 Td (|  user: {}        |  bookings: []    |   live: {}             |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 696.9 Td (|  role: 'customer'|  loadBookings\(\)  |   startTracking\(b\)     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 687.3 Td (|  isLoggedIn: bool|  getById\(id\)     |   stopTracking\(id\)     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 677.7 Td (|  login\(user\)     |  create\(b\)       |   getTracking\(id\)      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 668.1 Td (|  logout\(\)        |  updateStatus\(\)  |   resetAll\(\)           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 658.5 Td (|  switchRole\(r\)   |                  |   [intervals Map]      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 648.9 Td (+------------------+------------------+------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 639.3 Td (         |                  |                    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 629.7 Td (                                                  ) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 620.1 Td (    +--------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 610.5 Td (    |            AsyncStorage \(persistence\)             |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 600.9 Td (    |    auth: { user, role }                          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 591.3 Td (    |    bookings: [ ...serializedBookings ]            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 581.7 Td (    |    tracking: {} \(NOT persisted - live only\)      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 572.1 Td (    +--------------------------------------------------+) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 549.5 Td (4.2 Data Flow - Booking Lifecycle) Tj ET
+0.95 0.95 0.95 rg 42.0 331.2 511.0 206.0 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 331.2 511.0 206.0 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 511.7 Td (Customer books          Worker accepts         Worker starts job) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 502.1 Td (     |                       |                       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 492.5 Td (                                                      ) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 482.9 Td ( +--------+            +--------+             +------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 473.3 Td ( |requested| --------  |confirmed| --------   | inProgress  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 463.7 Td ( +--------+            +--------+             +------+------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 454.1 Td (                                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 444.5 Td (                                          trackingStore.startTracking\(\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 434.9 Td (                                          +---------- ----------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 425.3 Td (                                          |  Worker marker       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 415.7 Td (                                          |  animates along      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 406.1 Td (                                          |  road route toward   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 396.5 Td (                                          |  customer            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 386.9 Td (                                          +----------+----------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 377.3 Td (                                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 367.7 Td (                                              progress   1.0) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 358.1 Td (                                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 348.5 Td (                                              +------ ------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 338.9 Td (                                              |  completed   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 329.3 Td (                                              +-------------+) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 311.2 m 547.0 311.2 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 288.2 Td (5 - Live Tracking System \(Zomato/Swiggy-Style\)) Tj ET
+BT /F1 10.0 Tf 0.10 0.10 0.10 rg 48.0 266.7 Td (This is the hero feature for the SIH demo.) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 249.2 Td (5.1 Architecture Diagram) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Length 6927 >>
+stream
+0.95 0.95 0.95 rg 42.0 458.8 511.0 321.2 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 458.8 511.0 321.2 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 754.5 Td (+--------------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 744.9 Td (|                  LIVE TRACKING PIPELINE                       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 735.3 Td (|                                                               |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 725.7 Td (|  +-------------+     +----------------+    +--------------+  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 716.1 Td (|  | worker.location|-- |  roadPathFor\(\) |-- |  Route:      |  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 706.5 Td (|  | \(base addr\)  |    |  \(zigzag city-  |    |  [p0, p1,    |  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 696.9 Td (|  +-------------+    |   block path\)   |    |   ... p8]    |  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 687.3 Td (|                      +----------------+    +------+-------+  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 677.7 Td (|                                                    |          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 668.1 Td (|  +-------------+     +----------------+            |          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 658.5 Td (|  | setInterval |---- | easeInOut\(t\)   |---+        |          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 648.9 Td (|  | \(700ms tick\)|     | \(smooth motion\)|   |        |          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 639.3 Td (|  +-------------+     +----------------+                       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 629.7 Td (|                                    +--------------------+     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 620.1 Td (|                                    | pointAtPathFraction |     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 610.5 Td (|                                    | \(arc-length interp\) |     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 600.9 Td (|                                    +--------+-----------+     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 591.3 Td (|                                             |                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 581.7 Td (|                                    +-------- -----------+     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 572.1 Td (|                                    |  workerPos: [lat,lng]   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 562.5 Td (|                                    |  distance: 1.2 km       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 552.9 Td (|                                    |  etaMin: 2              |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 543.3 Td (|                                    |  status: 'traveling'    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 533.7 Td (|                                    +--------+-----------+     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 524.1 Td (|                                             |                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 514.5 Td (|                                    +-------- -----------+     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 504.9 Td (|                                    |  React State -> UI   |     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 495.3 Td (|                                    |  MapView.Marker      |     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 485.7 Td (|                                    |  Polyline            |     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 476.1 Td (|                                    |  TrackingCard readout |    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 466.5 Td (|                                    +--------------------+     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 456.9 Td (+--------------------------------------------------------------+) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 434.3 Td (5.2 Key Algorithms) Tj ET
+0.043 0.094 0.067 rg 48.0 405.6 499.0 18.4 re f
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 51.0 404.0 Td (Component) Tj ET
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 217.3 404.0 Td (File) Tj ET
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 383.7 404.0 Td (Purpose) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 405.6 m 547.0 405.6 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 385.6 Td (roadPathFor\(start, dest\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 385.6 Td (src/utils/geo.js) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 385.6 Td (Generates a deterministic 8-leg zigzag route) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 375.2 Td (\(alternating lat/lng moves\) using mulberry32) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 364.8 Td (seeded PRNG - stable across re-renders) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 366.4 m 547.0 366.4 l S
+0.96 0.96 0.96 rg 48.0 327.2 499.0 39.2 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 346.4 Td (pointAtPathFraction\(route, t\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 346.4 Td (src/utils/geo.js) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 346.4 Td (Arc-length parameterised interpolation -) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 336.0 Td (marker moves at constant speed along the) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 325.6 Td (zigzag, not faster on diagonals) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 327.2 m 547.0 327.2 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 307.2 Td (easeInOut\(t\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 307.2 Td (src/utils/geo.js) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 307.2 Td (Quadratic ease-in-out for natural) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 296.8 Td (acceleration/deceleration) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 298.4 m 547.0 298.4 l S
+0.96 0.96 0.96 rg 48.0 269.6 499.0 28.8 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 278.4 Td (pathLength\(route\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 278.4 Td (src/utils/geo.js) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 278.4 Td (Sum of haversine distances between) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 268.0 Td (consecutive route points) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 269.6 m 547.0 269.6 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 249.6 Td (remainingPathDistance\(route, t\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 249.6 Td (src/utils/geo.js) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 249.6 Td (Road distance remaining = totalKm   \(1   t\)) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 251.2 m 547.0 251.2 l S
+0.96 0.96 0.96 rg 48.0 212.0 499.0 39.2 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 231.2 Td (customerLocationFor\(booking\)) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 231.2 Td (src/utils/geo.js) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 231.2 Td (Deterministic customer coordinate from) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 220.8 Td (USER_LOCATION + hash\(booking.id\) - no) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 210.4 Td (GPS needed) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 212.0 m 547.0 212.0 l S
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 193.5 Td (5.3 Tracking Card \(Bottom Sheet\)) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Length 6263 >>
+stream
+0.95 0.95 0.95 rg 42.0 641.2 511.0 138.8 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 641.2 511.0 138.8 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 754.5 Td (+--------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 744.9 Td (|  --- \(handle bar\)                    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 735.3 Td (|                                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 725.7 Td (|  * LIVE              Rajesh - Plumbing|) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 716.1 Td (|                                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 706.5 Td (|  +--------------------------------+  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 696.9 Td (|  |    1.2 km away                 |  |    Decreases in real-time) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 687.3 Td (|  |    Arriving in ~2 min          |  |    ETA countdown) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 677.7 Td (|  +--------------------------------+  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 668.1 Td (|                                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 658.5 Td (|  Worker is on the way   [progress]   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 648.9 Td (|                                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 639.3 Td (+--------------------------------------+) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 621.2 m 547.0 621.2 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 598.2 Td (6 - Mock Backend Architecture) Tj ET
+0.95 0.95 0.95 rg 42.0 340.3 511.0 244.4 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 340.3 511.0 244.4 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 559.2 Td (+--------------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 549.6 Td (|                    MOCK DATA LAYER                            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 540.0 Td (|                                                               |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 530.4 Td (|  src/data/                                                    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 520.8 Td (|  +-- workers.js    24 workers \(Pune coords\)                   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 511.2 Td (|  |                  { id, name, service, rating,              |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 501.6 Td (|  |                    avatar \(emoji\), languages,              |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 492.0 Td (|  |                    location: [lat, lng] }                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 482.4 Td (|  |                                                            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 472.8 Td (|  +-- services.js   8 service categories                       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 463.2 Td (|  |                  { id, name, icon, basePrice, color }      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 453.6 Td (|  |                                                            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 444.0 Td (|  +-- bookings.js   8 seeded bookings                          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 434.4 Td (|                     { id, service, workerId, customerId,      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 424.8 Td (|                       status, address, amount, coopFee,      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 415.2 Td (|                       createdAt }                             |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 405.6 Td (|                                                               |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 396.0 Td (|  Persistence: AsyncStorage \(survives app close/reopen\)        |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 386.4 Td (|  Reset: logout clears all stores + intervals                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 376.8 Td (+--------------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 367.2 Td () Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 357.6 Td (Service Categories:) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 348.0 Td (    Plumbing      Cleaning      Electrical     Gardening) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 338.4 Td (    Carpentry     Painting      Moving          General Repair) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 320.3 m 547.0 320.3 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 297.3 Td (7 - Trilingual i18n System) Tj ET
+0.95 0.95 0.95 rg 42.0 116.2 511.0 167.6 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 116.2 511.0 167.6 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 258.3 Td (+----------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 248.7 Td (|                TRANSLATION PIPELINE                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 239.1 Td (|                                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 229.5 Td (|  src/i18n/                                          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 219.9 Td (|  +-- index.js       t\('key'\) function               |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 210.3 Td (|  +-- en.json        English \(base\)                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 200.7 Td (|  +-- hi.json        Hindi / ?  ?                    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 191.1 Td (|  +-- mr.json        Marathi / ?? ?                   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 181.5 Td (|                                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 171.9 Td (|  Usage:  t\('tracking.kmAway', { km: 1.2 }\)          |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 162.3 Td (|  Output: "1.2 km away" / "1.2 ? ?  ? ?" / " .  ? ?  ? ?" |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 152.7 Td (|                                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 143.1 Td (|  Namespace convention: 'category.key'               |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 133.5 Td (|    bookings.trackWorker, workerApp.accept,           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 123.9 Td (|    tracking.live, admin.revenue, home.heroTitle      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 114.3 Td (+----------------------------------------------------+) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 96.2 m 547.0 96.2 l S
+endstream
+endobj
+7 0 obj
+<< /Length 4588 >>
+stream
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 767.0 Td (8 - Theming & Dark Mode) Tj ET
+0.95 0.95 0.95 rg 42.0 557.1 511.0 196.4 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 557.1 511.0 196.4 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 728.0 Td (+----------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 718.4 Td (|               THEME SYSTEM                                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 708.8 Td (|                                                           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 699.2 Td (|  src/theme/                                               |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 689.6 Td (|  +-- colors.js     LIGHT_COLORS, DARK_COLORS             |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 680.0 Td (|  +-- typography.js  caption, body, h1, h2, h3            |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 670.4 Td (|  +-- spacing.js    xs, sm, md, lg, xl                   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 660.8 Td (|  +-- radius.js     sm, md, lg, xl, round                |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 651.2 Td (|                                                           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 641.6 Td (|  Pattern: mutable singleton `colors` + `makeStyles\(colors\)` |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 632.0 Td (|                                                           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 622.4 Td (|  User toggles dark mode:                                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 612.8 Td (|    colors = isDark ? DARK_COLORS : LIGHT_COLORS           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 603.2 Td (|    theme = isDark ? 'dark' : 'light'                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 593.6 Td (|    <View key={theme}>...</View>    forces full remount    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 584.0 Td (|                                                           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 574.4 Td (|  All components call makeStyles\(colors\) at render time.   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 564.8 Td (|  Every StyleSheet lives in a factory, not a static object.|) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 555.2 Td (+----------------------------------------------------------+) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 537.1 m 547.0 537.1 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 514.1 Td (9 - Data Model) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 490.1 Td (Workers \(24 across Pune\)) Tj ET
+0.95 0.95 0.95 rg 42.0 348.6 511.0 129.2 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 348.6 511.0 129.2 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 452.3 Td ({) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 442.7 Td (  id: 'w1',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 433.1 Td (  name: 'Rajesh Kumar',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 423.5 Td (  service: 'plumbing',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 413.9 Td (  rating: 4.8,) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 404.3 Td (  completedJobs: 156,) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 394.7 Td (  avatar: '   ',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 385.1 Td (  languages: ['Hindi', 'Marathi', 'English'],) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 375.5 Td (  location: [18.5223, 73.8504],  // Shivajinagar, Pune) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 365.9 Td (  available: true,) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 356.3 Td (  hourlyRate: 350) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 346.7 Td (}) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 324.1 Td (Bookings) Tj ET
+0.95 0.95 0.95 rg 42.0 192.3 511.0 119.6 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 192.3 511.0 119.6 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 286.4 Td ({) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 276.8 Td (  id: 'b1',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 267.2 Td (  service: 'plumbing',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 257.6 Td (  workerId: 'w1',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 248.0 Td (  customerId: 'c1',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 238.4 Td (  status: 'requested' | 'confirmed' | 'inProgress' | 'completed' | 'cancelled',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 228.8 Td (  address: '12, FC Road, Pune',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 219.2 Td (  amount: 850,) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 209.6 Td (  coopFee: 85,           // 10% to welfare fund) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 200.0 Td (  createdAt: '2025-09-01T10:00:00Z') Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 190.4 Td (}) Tj ET
+BT /F1 12.5 Tf 0.18 0.49 0.20 rg 48.0 167.8 Td (Tracking \(live, in-memory only\)) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Length 6813 >>
+stream
+0.95 0.95 0.95 rg 42.0 660.4 511.0 119.6 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 660.4 511.0 119.6 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 754.5 Td ({) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 744.9 Td (  bookingId: 'b1',) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 735.3 Td (  workerStart: [18.5223, 73.8504],) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 725.7 Td (  customer: [18.5204, 73.8567],) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 716.1 Td (  route: [[lat, lng], ...],    // 9-point zigzag road path) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 706.5 Td (  progress: 0.45,              // 0..1) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 696.9 Td (  workerPos: [lat, lng],       // current interpolated position) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 687.3 Td (  distance: 0.8,               // km remaining \(road distance\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 677.7 Td (  etaMin: 1,                   // minutes remaining) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 668.1 Td (  status: 'traveling'          // 'traveling' | 'arrived') Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 658.5 Td (}) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 640.4 m 547.0 640.4 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 617.4 Td (10 - Cooperative Model \(Problem Statement Core\)) Tj ET
+0.95 0.95 0.95 rg 42.0 397.9 511.0 206.0 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 397.9 511.0 206.0 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 578.4 Td (+-------------------------------------------------------------+) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 568.8 Td (|              COOPERATIVE REVENUE MODEL                       |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 559.2 Td (|                                                              |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 549.6 Td (|  Customer pays Rs.850 for plumbing service                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 540.0 Td (|          |                                                   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 530.4 Td (|          +--  92% -> Worker earnings \(Rs.782\)                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 520.8 Td (|          |       +-- Direct income                           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 511.2 Td (|          |       +-- Skill training fund                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 501.6 Td (|          |       +-- Insurance coverage                      |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 492.0 Td (|          |                                                   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 482.4 Td (|          +--  8% -> Cooperative welfare fund \(Rs.68\)           |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 472.8 Td (|                  +-- Worker insurance pool                   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 463.2 Td (|                  +-- Emergency assistance                    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 453.6 Td (|                  +-- Community development                   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 444.0 Td (|                  +-- Platform maintenance                    |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 434.4 Td (|                                                              |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 424.8 Td (|  v NO investor dividends                                     |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 415.2 Td (|  v NO commission extraction                                  |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 405.6 Td (|  v 100% surplus reinvested in workers                        |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 396.0 Td (+-------------------------------------------------------------+) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 377.9 m 547.0 377.9 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 354.9 Td (11 - Key Differentiators \(for SIH Judges\)) Tj ET
+0.043 0.094 0.067 rg 48.0 325.0 499.0 18.4 re f
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 51.0 323.4 Td (Feature) Tj ET
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 217.3 323.4 Td (What It Solves) Tj ET
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 383.7 323.4 Td (How) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 325.0 m 547.0 325.0 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 305.0 Td (Trilingual UI) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 305.0 Td (Exclusion of non-English workers) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 305.0 Td (EN/HI/MR with cultural tone matching) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 306.6 m 547.0 306.6 l S
+0.96 0.96 0.96 rg 48.0 288.2 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 286.6 Td (Cooperative model) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 286.6 Td (Exploitative gig-platform commissions) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 286.6 Td (92% worker share, 8% welfare fund) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 288.2 m 547.0 288.2 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 268.2 Td (Role switcher) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 268.2 Td (Demo convenience + multi-stakeholder view) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 268.2 Td (One app, three perspectives) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 269.8 m 547.0 269.8 l S
+0.96 0.96 0.96 rg 48.0 251.4 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 249.8 Td (Live tracking) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 249.8 Td (Customer trust & worker accountability) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 249.8 Td (Zomato-style road-following simulation) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 251.4 m 547.0 251.4 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 231.4 Td (No AI dependency) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 231.4 Td (Accessibility in low-connectivity areas) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 231.4 Td (Offline-first mock backend) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 233.0 m 547.0 233.0 l S
+0.96 0.96 0.96 rg 48.0 214.6 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 213.0 Td (Dark mode) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 213.0 Td (Usability for outdoor/night workers) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 213.0 Td (Full theme system, per-component) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 214.6 m 547.0 214.6 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 194.6 Td (Worker dashboard) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 194.6 Td (Financial transparency) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 194.6 Td (Earnings, jobs, ratings at a glance) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 196.2 m 547.0 196.2 l S
+0.96 0.96 0.96 rg 48.0 177.8 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 176.2 Td (Admin analytics) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 217.3 176.2 Td (Cooperative governance) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 383.7 176.2 Td (Zone coverage, revenue split, redeployment) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 177.8 m 547.0 177.8 l S
+0.5 0.5 0.5 RG 1.5 w 48.0 163.8 m 547.0 163.8 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 140.8 Td (12 - Demo Flow \(5-Minute Pitch Script\)) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Length 2206 >>
+stream
+0.95 0.95 0.95 rg 42.0 583.6 511.0 196.4 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 583.6 511.0 196.4 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 754.5 Td (Step 1  --   Open app -> Splash screen \(??? ? ? ?  branding\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 744.9 Td (Step 2  --   Login as Demo Customer \(phone auto-fill\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 735.3 Td (Step 3  --   Browse services -> Plumbing tile -> Search screen with map) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 725.7 Td (Step 4  --   Book a plumber -> Confirm booking) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 716.1 Td (Step 5  --   Switch to Demo Worker \(role switcher pill\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 706.5 Td (Step 6  --   Accept the job -> Start job \(status -> inProgress\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 696.9 Td (Step 7  --   Switch back to Customer -> Open booking -> "Track Worker") Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 687.3 Td (Step 8  --   * LIVE TRACKING SCREEN *) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 677.7 Td (              . Worker marker moves along roads on map) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 668.1 Td (              . Distance counts down: 1.2 km -> 0.8 -> 0.3 -> arrived) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 658.5 Td (              . ETA updates in real-time) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 648.9 Td (              . "Worker has arrived" with checkmark) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 639.3 Td (Step 9  --   Switch to Admin -> Analytics dashboard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 629.7 Td (              . Revenue breakdown \(92% workers / 8% welfare\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 620.1 Td (              . Zone coverage heatmap) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 610.5 Td (              . Coverage gap alerts) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 600.9 Td (Step 10 --   Toggle dark mode -> Entire app re-themes) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 591.3 Td (Step 11 --   Switch to ?  ?  -> All labels translate instantly) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 581.7 Td (Step 12 --   Q&A) Tj ET
+0.5 0.5 0.5 RG 1.5 w 48.0 563.6 m 547.0 563.6 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 540.6 Td (13 - Project File Tree) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Length 6753 >>
+stream
+0.95 0.95 0.95 rg 42.0 84.4 511.0 695.6 re f
+0.85 0.85 0.85 RG 0.8 w 42.0 84.4 511.0 695.6 re S
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 754.5 Td (sahkar-sathi/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 744.9 Td (+-- app/                            Expo Router file-based routes) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 735.3 Td (|   +-- _layout.js                  Root Stack, auth gate, role switcher) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 725.7 Td (|   +-- index.js                    Splash screen) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 716.1 Td (|   +-- emergency.js                SOS screen) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 706.5 Td (|   +-- auth/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 696.9 Td (|   |   +-- login.js) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 687.3 Td (|   |   +-- register.js) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 677.7 Td (|   +-- \(customer\)/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 668.1 Td (|   |   +-- _layout.js              Customer bottom tabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 658.5 Td (|   |   +-- index.js                Home dashboard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 648.9 Td (|   |   +-- search.js               Service search + map) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 639.3 Td (|   |   +-- bookings.js             Booking list) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 629.7 Td (|   |   +-- profile.js              Customer profile) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 620.1 Td (|   |   +-- booking/[id].js         Booking detail + track button) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 610.5 Td (|   +-- \(worker\)/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 600.9 Td (|   |   +-- _layout.js              Worker bottom tabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 591.3 Td (|   |   +-- index.js                Worker dashboard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 581.7 Td (|   |   +-- jobs.js                 Available jobs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 572.1 Td (|   |   +-- profile.js              Worker profile) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 562.5 Td (|   +-- \(admin\)/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 552.9 Td (|   |   +-- _layout.js              Admin bottom tabs) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 543.3 Td (|   |   +-- index.js                Admin dashboard) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 533.7 Td (|   |   +-- analytics.js            Revenue + workforce analytics) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 524.1 Td (|   |   +-- workers.js              Worker management) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 514.5 Td (|   +-- track/[id].js               * Live tracking \(fullScreenModal\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 504.9 Td (|) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 495.3 Td (+-- src/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 485.7 Td (|   +-- components/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 476.1 Td (|   |   +-- ui/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 466.5 Td (|   |   |   +-- index.js            Screen, Card, Button, Badge, etc.) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 456.9 Td (|   |   |   +-- Avatar.js           Emoji avatar component) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 447.3 Td (|   |   |   +-- Button.js           Themed button \(makeStyles injected\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 437.7 Td (|   |   |   +-- Header.js           App header bar) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 428.1 Td (|   |   |   +-- StatusBadge.js      Status pill component) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 418.5 Td (|   |   +-- booking/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 408.9 Td (|   |   |   +-- BookingCard.js      Booking summary card) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 399.3 Td (|   |   +-- tracking/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 389.7 Td (|   |       +-- TrackingCard.js     * Live tracking bottom sheet) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 380.1 Td (|   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 370.5 Td (|   +-- store/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 360.9 Td (|   |   +-- authStore.js            Auth + role switching) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 351.3 Td (|   |   +-- bookingStore.js         Bookings CRUD + persistence) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 341.7 Td (|   |   +-- trackingStore.js        * Live tracking simulation engine) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 332.1 Td (|   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 322.5 Td (|   +-- data/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 312.9 Td (|   |   +-- workers.js              24 Pune workers \(coords + profiles\)) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 303.3 Td (|   |   +-- services.js             8 service categories) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 293.7 Td (|   |   +-- bookings.js             8 seeded bookings) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 284.1 Td (|   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 274.5 Td (|   +-- utils/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 264.9 Td (|   |   +-- constants.js            USER_LOCATION \(Pune\), demo users) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 255.3 Td (|   |   +-- format.js               Currency, date formatters) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 245.7 Td (|   |   +-- geo.js                  * Haversine, road path, tracking math) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 236.1 Td (|   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 226.5 Td (|   +-- theme/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 216.9 Td (|   |   +-- colors.js               Light + dark palettes) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 207.3 Td (|   |   +-- typography.js           Font scale) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 197.7 Td (|   |   +-- spacing.js              4px grid system) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 188.1 Td (|   |   +-- radius.js               Border radii) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 178.5 Td (|   |) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 168.9 Td (|   +-- i18n/) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 159.3 Td (|       +-- index.js                t\(\) translation function) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 149.7 Td (|       +-- en.json                 English) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 140.1 Td (|       +-- hi.json                 Hindi) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 130.5 Td (|       +-- mr.json                 Marathi) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 120.9 Td (|) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 111.3 Td (+-- assets/                         Icons, splash, fonts) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 101.7 Td (+-- app.json                        Expo config) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 92.1 Td (+-- babel.config.js                 Babel + reanimated plugin) Tj ET
+BT /F1 7.5 Tf 0.2 0.2 0.2 rg 48.0 82.5 Td (+-- package.json                    Dependencies) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Length 2884 >>
+stream
+0.5 0.5 0.5 RG 1.5 w 48.0 782.0 m 547.0 782.0 l S
+BT /F1 15.0 Tf 0.04 0.09 0.07 rg 48.0 759.0 Td (14 - Dependencies) Tj ET
+0.043 0.094 0.067 rg 48.0 729.1 499.0 18.4 re f
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 51.0 727.5 Td (Package) Tj ET
+BT /F1 8.0 Tf 1.00 1.00 1.00 rg 300.5 727.5 Td (Purpose) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 729.1 m 547.0 729.1 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 709.1 Td (expo ~57) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 709.1 Td (Core SDK) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 710.7 m 547.0 710.7 l S
+0.96 0.96 0.96 rg 48.0 692.3 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 690.7 Td (expo-router ~7) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 690.7 Td (File-based navigation) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 692.3 m 547.0 692.3 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 672.3 Td (react-native-maps 1.27) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 672.3 Td (MapView, Marker, Polyline) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 673.9 m 547.0 673.9 l S
+0.96 0.96 0.96 rg 48.0 655.5 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 653.9 Td (zustand) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 653.9 Td (State management) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 655.5 m 547.0 655.5 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 635.5 Td (@react-native-async-storage/async-storage) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 635.5 Td (Local persistence) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 637.1 m 547.0 637.1 l S
+0.96 0.96 0.96 rg 48.0 618.7 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 617.1 Td (@expo/vector-icons) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 617.1 Td (MaterialCommunityIcons) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 618.7 m 547.0 618.7 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 598.7 Td (react-native-safe-area-context) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 598.7 Td (Dynamic island / notch insets) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 600.3 m 547.0 600.3 l S
+0.96 0.96 0.96 rg 48.0 581.9 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 580.3 Td (react-native-gesture-handler) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 580.3 Td (Swipe + drag gestures) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 581.9 m 547.0 581.9 l S
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 561.9 Td (react-native-reanimated) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 561.9 Td (Smooth animations) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 563.5 m 547.0 563.5 l S
+0.96 0.96 0.96 rg 48.0 545.1 499.0 18.4 re f
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 51.0 543.5 Td (expo-font) Tj ET
+BT /F1 8.0 Tf 0.10 0.10 0.10 rg 300.5 543.5 Td (Custom typography) Tj ET
+0.8 0.8 0.8 RG 0.5 w 48.0 545.1 m 547.0 545.1 l S
+0.5 0.5 0.5 RG 1.5 w 48.0 531.1 m 547.0 531.1 l S
+BT /F1 10.0 Tf 0.10 0.10 0.10 rg 48.0 513.1 Td (Prepared for Smart India Hackathon 2025 - Problem Statement #26089) Tj ET
+BT /F1 10.0 Tf 0.10 0.10 0.10 rg 48.0 498.1 Td (Sahkar Sathi \(??? ? ? ? \) - Empowering Gig Workers Through Cooperative Principles) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 2 >>
+endobj
+13 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 3 >>
+endobj
+14 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 4 >>
+endobj
+15 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 5 >>
+endobj
+16 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 6 >>
+endobj
+17 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 7 >>
+endobj
+18 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 8 >>
+endobj
+19 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 9 >>
+endobj
+20 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 10 >>
+endobj
+21 0 obj
+<< /Type /Page /Parent 13 /MediaBox [0 0 595.0 842.0] /Resources << /Font << /F1 1 >> >> /Contents 11 >>
+endobj
+22 0 obj
+<< /Type /Pages /Kids [12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R] /Count 10 >>
+endobj
+23 0 obj
+<< /Type /Catalog /Pages 13 0 R >>
+endobj
+xref
+0 24
+0000000000 65535 f 
+0000000014 00000 n 
+0000000111 00000 n 
+0000007428 00000 n 
+0000012969 00000 n 
+0000018175 00000 n 
+0000025154 00000 n 
+0000031469 00000 n 
+0000036109 00000 n 
+0000042974 00000 n 
+0000045232 00000 n 
+0000052038 00000 n 
+0000054975 00000 n 
+0000055095 00000 n 
+0000055215 00000 n 
+0000055335 00000 n 
+0000055455 00000 n 
+0000055575 00000 n 
+0000055695 00000 n 
+0000055815 00000 n 
+0000055935 00000 n 
+0000056056 00000 n 
+0000056177 00000 n 
+0000056300 00000 n 
+trailer
+<< /Size 24 /Root 12 0 R >>
+startxref
+56351
+%%EOF
