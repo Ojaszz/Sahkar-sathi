@@ -7,13 +7,15 @@
 // (see the LIVE_DEMO notes) for `board: true` to work.
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { supabase } from '../lib/supabase';
+import { supabase, resetDeviceId } from '../lib/supabase';
 import { useSyncStore } from '../store/syncStore';
 import { useAuthStore } from '../store/authStore';
 import { useBookingStore } from '../store/bookingStore';
 import { useChatStore } from '../store/chatStore';
 import { useTagAlongStore } from '../store/tagAlongStore';
 import { useEmergenciesStore } from '../store/emergenciesStore';
+import { useDeclineStore } from '../store/declineStore';
+import { useWorkerDirectoryStore } from '../store/workerDirectoryStore';
 
 const LOCAL_KEYS = [
   'ss_auth_v1',
@@ -36,6 +38,7 @@ export async function resetDemo({ board = false } = {}) {
         supabase.remove('messages', {}),
         supabase.remove('tag_alongs', {}),
         supabase.remove('emergencies', {}),
+        supabase.remove('worker_profiles', {}),
       ]);
     } catch (e) {
       // If the board wipe fails, still reset the phone; surface the reason.
@@ -56,5 +59,10 @@ export async function resetDemo({ board = false } = {}) {
   useChatStore.getState().reset();
   useTagAlongStore.getState().reset();
   useEmergenciesStore.getState().reset();
+  useDeclineStore.getState().reset();
+  useWorkerDirectoryStore.getState().reset();
+  // Fresh identity so the next demo run is a brand-new customer (the old device
+  // id's bookings/messages were just wiped off the shared board).
+  resetDeviceId();
   return true;
 }

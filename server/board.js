@@ -187,7 +187,11 @@ const server = createServer(async (req, res) => {
       const rows = Array.isArray(body) ? body : [body || {}];
       const out = rows.map((r) => {
         const w = { ...r };
-        if (!w.created_at) w.created_at = w.time || nowIso();
+        // Server-side timestamp: rows the app inserts carry a `time` DISPLAY string
+        // ("ASAP", "09:00 AM") — using it as created_at made `order=created_at.desc`
+        // sort bookings by ASCII and could bury a new request below a
+        // `limit=50` poll window. A real timestamp keeps newest-first reliable.
+        if (!w.created_at) w.created_at = nowIso();
         const existing = upsert ? db[table].find((x) => x[upsert] === w[upsert]) : null;
         if (upsert && existing) Object.assign(existing, w);
         else db[table].push(w);

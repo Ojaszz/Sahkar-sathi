@@ -29,6 +29,7 @@ export default function WorkerJobs() {
   const { bookings, loadBookings, setStatus } = useBookingStore();
   const liveFeed = useSyncStore((s) => s.liveFeed);
   const online = useSyncStore((s) => s.online);
+  const bookingError = useSyncStore((s) => s.bookingError);
   const acceptBooking = useSyncStore((s) => s.acceptBooking);
   const declinedByWorker = useDeclineStore((s) => s.byWorker);
   const [tab, setTab] = useState('requests');
@@ -40,13 +41,18 @@ export default function WorkerJobs() {
   const workerId = user?.id || 'w1';
   const my = useMemo(() => bookings.filter((b) => b.workerId === workerId), [bookings, workerId]);
 
-  // LIVE feed: anything 'requested' (waiting for a worker) + my confirmed/inProgress.
-  // Requests this worker has REJECTED (personal pass — not a board cancel) are
-  // filtered out of their list but stay live for every other worker.
+  // LIVE feed: requests DIRECTED to this worker (customer tapped this worker's
+  // card) + my confirmed/inProgress. A booking to Vardhan must not flash on the
+  // plumber's phone — the `worker_id` column is the recipient, and every
+  // booking is addressed to exactly one worker. Requests this worker has
+  // REJECTED (personal pass — not a board cancel) are filtered out.
   const declined = declinedByWorker[workerId] || new Set();
   const liveRequests = useMemo(
-    () => liveFeed.filter((b) => b.status === 'requested' && !declined.has(b.id)),
-    [liveFeed, declined]
+    () =>
+      liveFeed.filter(
+        (b) => b.status === 'requested' && b.workerId === workerId && !declined.has(b.id)
+      ),
+    [liveFeed, declined, workerId]
   );
   const liveMine = useMemo(
     () => liveFeed.filter((b) => b.workerId === workerId && ['confirmed', 'inProgress'].includes(b.status)),
@@ -58,7 +64,9 @@ export default function WorkerJobs() {
       // Rejected requests re-appear dimmed at the BOTTOM so a mis-tap can be
       // reversed ("Re-take") — they're still live for every other worker on the board.
       if (liveRequests.length) {
-        const passed = liveFeed.filter((b) => b.status === 'requested' && declined.has(b.id));
+        const passed = liveFeed.filter(
+          (b) => b.status === 'requested' && b.workerId === workerId && declined.has(b.id)
+        );
         return [...liveRequests, ...passed];
       }
       const all = my.filter((b) => b.status === 'requested');
@@ -117,6 +125,21 @@ export default function WorkerJobs() {
           </View>
         ) : null}
       </View>
+
+      {/* Bookings feed diagnostics — when a worker is connected but sees no
+          requests, the cause is usually the bookings GET failing or this phone
+          polling a different/empty board than the customer. Surface it. */}
+      {bookingError ? (
+        <View style={styles.syncBanner}>
+          <Text style={[typography.small, { color: '#fff' }]}>
+            ⚠ {t('workerApp.feedError')}: {bookingError}
+          </Text>
+        </View>
+      ) : online && liveFeed.length === 0 ? (
+        <View style={styles.syncBanner}>
+          <Text style={[typography.small, { color: '#fff' }]}>⚠ {t('workerApp.feedEmpty')}</Text>
+        </View>
+      ) : null}
 
       <View style={styles.tabs}>
         {TABS.map((tb) => (
@@ -219,6 +242,13 @@ const makeStyles = (colors) => StyleSheet.create({
     borderRadius: radius.round,
     paddingHorizontal: spacing.sm,
     paddingVertical: 4,
+  },
+  syncBanner: {
+    backgroundColor: colors.danger || '#e74c3c',
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    marginBottom: spacing.md,
   },
   tabs: {
     flexDirection: 'row',

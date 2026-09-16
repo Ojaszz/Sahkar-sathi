@@ -92,7 +92,7 @@ export default function NewBookingScreen() {
       Alert.alert(t('home.offline'), t('bookings.workerOffline'));
       return;
     }
-    await useBookingStore.getState().createBooking({
+    const booking = await useBookingStore.getState().createBooking({
       customerId: user.id,
       customerName: user.name,
       workerId: worker.id,
@@ -104,6 +104,13 @@ export default function NewBookingScreen() {
       issue: issue.trim() || `${t(`categories.${worker.service}`)} service`,
       address,
     });
+    if (!booking || booking.syncFailed) {
+      Alert.alert(
+        'Request not posted',
+        'Your booking could not reach the worker board. Check your internet connection and try again.'
+      );
+      return;
+    }
     setShowSuccess(true);
   };
 

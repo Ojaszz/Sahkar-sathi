@@ -160,6 +160,15 @@ export function newMessageId() {
   return 'm' + Math.random().toString(36).slice(2, 10);
 }
 
+// Drop this phone's persisted device id (and the in-memory cache) so a "start
+// fresh" reset gives the phone a genuinely new identity for the next demo run.
+export function resetDeviceId() {
+  cachedDeviceId = null;
+  try {
+    AsyncStorage.removeItem('ss_device_id');
+  } catch {}
+}
+
 // Tiny id for a new tag-along request row (client-generated, like messages).
 export function newTagAlongId() {
   return 'ta' + Math.random().toString(36).slice(2, 10);

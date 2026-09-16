@@ -6,8 +6,17 @@ export const useBookingStore = create((set, get) => ({
   bookings: [],
 
   async loadBookings() {
-    const bookings = await api.listBookings();
-    set({ bookings });
+    const apiBookings = await api.listBookings();
+    // Merge with existing store instead of replacing — live bookings
+    // (from publishBooking / sync poll) already in the store are preserved.
+    const existing = get().bookings;
+    const merged = [...apiBookings];
+    for (const b of existing) {
+      if (b.isLive && !merged.some((m) => m.id === b.id)) {
+        merged.unshift(b);
+      }
+    }
+    set({ bookings: merged });
   },
 
   async createBooking(payload) {

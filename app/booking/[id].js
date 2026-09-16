@@ -60,7 +60,6 @@ export default function BookingDetailScreen() {
   const isCustomer = user?.role !== 'worker';
 
   const doCancel = () => {
-  const styles = makeStyles(colors);
     Alert.alert(t('bookings.cancelBooking'), t('bookings.cancelBookingQ'), [
       { text: t('common.no'), style: 'cancel' },
       {
@@ -75,7 +74,6 @@ export default function BookingDetailScreen() {
   };
 
   const submitReview = async () => {
-  const styles = makeStyles(colors);
     await addReview(booking.id, rating, reviewText.trim() || t('bookings.greatService'));
     setShowReview(false);
     router.back();

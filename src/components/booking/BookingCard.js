@@ -38,6 +38,15 @@ export default function BookingCard({ booking }) {
 
       <View style={styles.divider} />
 
+      {booking.syncFailed ? (
+        <View style={styles.unsynced}>
+          <MaterialCommunityIcons name="cloud-alert" size={13} color={colors.warning} />
+          <Text style={[typography.small, { color: colors.warning }]}>
+            {t('bookings.notPublished')}
+          </Text>
+        </View>
+      ) : null}
+
       <View style={styles.bottomRow}>
         <Text numberOfLines={1} style={[typography.caption, styles.issue]}>{booking.issue}</Text>
         <View style={styles.amountWrap}>
@@ -64,6 +73,17 @@ const makeStyles = (colors) => StyleSheet.create({
   emoji: { fontSize: 20 },
   mid: { flex: 1, gap: 2 },
   divider: { height: 1, backgroundColor: colors.divider, marginVertical: spacing.md },
+  unsynced: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: colors.warningLight,
+    borderRadius: radius.round,
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.md,
+    paddingVertical: 2,
+    marginBottom: spacing.sm,
+  },
   bottomRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
   issue: { color: colors.textSecondary, flex: 1 },
   amountWrap: { flexDirection: 'row', alignItems: 'center', gap: 2 },

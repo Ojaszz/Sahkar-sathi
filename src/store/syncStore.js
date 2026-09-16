@@ -48,14 +48,36 @@ function mapRow(r) {
     issue: r.issue || '',
     amount: r.amount ?? 0,
     coopFee: r.coop_fee ?? 0,
+    hours: r.hours ?? 1,
     date: r.date || (r.created_at || '').slice(0, 10),
     time: r.time || 'ASAP',
-    hours: r.hours ?? 1,
     payment: r.payment || 'unpaid',
     paymentMethod: r.payment_method || null,
     rating: r.rating ?? null,
     reviewed: !!r.reviewed,
     isLive: true,
+  };
+}
+
+// Keep client-only camelCase fields out of PostgREST writes. Supabase columns
+// use snake_case; sending both shapes makes PostgREST reject the whole request.
+function toBookingRow(booking) {
+  return {
+    id: booking.id,
+    service: booking.service,
+    customer_id: booking.customerId,
+    customer_name: booking.customerName || 'Customer',
+    worker_id: booking.workerId || null,
+    worker_name: booking.workerName || '',
+    status: booking.status || 'requested',
+    address: booking.address || '',
+    issue: booking.issue || '',
+    amount: booking.amount ?? 0,
+    coop_fee: booking.coopFee ?? 0,
+    date: booking.date || null,
+    time: booking.time || null,
+    lat: booking.lat ?? null,
+    lng: booking.lng ?? null,
   };
 }
 
@@ -83,6 +105,7 @@ export const useSyncStore = create((set, get) => ({
   myDeviceId: null,
   msgError: null, // last messages-table GET error (surfaced in the chat sync banner)
   msgCount: null, // last messages rows matched for this phone
+  bookingError: null, // last bookings-table GET error (surfaced in the worker jobs banner)
 
   async init() {
     if (get().mode !== 'live') return;
@@ -120,7 +143,7 @@ export const useSyncStore = create((set, get) => ({
     liveBus.cancel = null;
     liveBus.payment = null;
     liveBus.review = null;
-    set({ online: false, connected: false, liveFeed: [], myDeviceId: null, msgError: null, msgCount: null });
+    set({ online: false, connected: false, liveFeed: [], myDeviceId: null, msgError: null, msgCount: null, bookingError: null });
   },
 
   async poll() {
@@ -136,7 +159,7 @@ export const useSyncStore = create((set, get) => ({
       if (sig !== lastSig) {
         lastSig = sig;
         const merged = (rows || []).map(mapRow);
-        set({ liveFeed: merged, online: true, connected: true });
+        set({ liveFeed: merged, online: true, connected: true, bookingError: null });
         // Merge rows that belong to THIS phone into the local booking store.
         // Demo customers use the device id, while signed-in customers use their
         // Supabase user id. Workers use their account/static worker id.
@@ -152,9 +175,19 @@ export const useSyncStore = create((set, get) => ({
             useBookingStore.getState().mergeRemote(b);
           }
         }
+      } else if (!get().online) {
+        // Feed clean-up surfaced the board again even with no row changes.
+        set({ online: true, connected: true });
       }
-    } catch {
-      set({ online: false });
+      // Local-first healing: a booking whose insert failed while the board was
+      // unreachable never reached the worker phones. Now that the board answers,
+      // publish those again so the request feed picks them up automatically.
+      await get().republishUnsynced(rows || []);
+    } catch (e) {
+      // A failing bookings GET is the usual culprit behind "customer placed a
+      // request but my worker feed shows nothing" — surface it instead of only
+      // flipping the online dot.
+      set({ online: false, bookingError: (e && e.message) || String(e) });
     }
 
     // Chat messages that involve THIS phone (mine as customer or as worker).
@@ -267,20 +300,39 @@ export const useSyncStore = create((set, get) => ({
     // is unreachable.
     useBookingStore.getState().mergeRemote(local);
     try {
-      const row = await supabase.insert('bookings', {
-        ...local,
-        customer_id: customerId,
-        customer_name: local.customerName,
-        worker_id: local.workerId,
-        worker_name: local.workerName,
-        coop_fee: local.coopFee,
-      });
+      const row = await supabase.insert('bookings', toBookingRow(local));
       const b = row && row[0] ? mapRow(row[0]) : local;
       if (b && b !== local) useBookingStore.getState().mergeRemote(b);
       return b || local;
     } catch {
-      // Board unreachable — the local booking still stands on this phone.
-      return local;
+      // Board unreachable — the local booking still stands on THIS phone, but the
+      // worker phones never see it. Flag it so the customer knows it hasn't been
+      // published (no silent adoption of a request that only exists locally).
+      const stuck = { ...local, syncFailed: true };
+      useBookingStore.getState().mergeRemote(stuck);
+      return stuck;
+    }
+  },
+
+  // Republish bookings this phone created that never made it onto the board
+  // (publishBooking's insert failed while offline). Called from the poll once the
+  // board answers again; only posts a row whose id is NOT already on the board,
+  // so a lost-response-but-actually-saved row is never duplicated.
+  async republishUnsynced(rows) {
+    const stuck = useBookingStore.getState().bookings.filter((b) => b.syncFailed);
+    for (const b of stuck) {
+      if (rows.some((r) => String(r.id) === String(b.id))) {
+        // It reached the board after all — just clear the flag.
+        useBookingStore.getState().mergeRemote({ ...b, syncFailed: false });
+        continue;
+      }
+      try {
+        await supabase.insert('bookings', toBookingRow(b));
+        useBookingStore.getState().mergeRemote({ ...b, syncFailed: false });
+      } catch {
+        // Board still unreachable — this poll's `online: false` stays visible
+        // and the banner keeps explaining why. Try again next poll.
+      }
     }
   },
 

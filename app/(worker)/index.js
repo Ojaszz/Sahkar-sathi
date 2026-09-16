@@ -41,13 +41,19 @@ export default function WorkerDashboard() {
   // registered with email is brand new — greeting + rating reflect that.
   const known = isKnownWorker(user?.id);
   const myBookings = bookings.filter((b) => b.workerId === workerId);
-  // Live requests are unclaimed rows (worker_id null) that arrive via the poll,
-  // so the "new requests" banner must count the LIVE feed, not myBookings.
+  // Live requests are addressed rows (worker_id = this worker) that arrive via
+  // the poll, so the "new requests" banner must count the LIVE feed, not
+  // myBookings — and only requests meant for THIS worker.
   const liveFeed = useSyncStore((s) => s.liveFeed);
   const declined = useDeclineStore((s) => s.byWorker)[workerId] || new Set();
+  // Only requests the CUSTOMER addressed to THIS worker (worker_id matches);
+  // a booking to someone else must never pop up on this phone.
   const requests = useMemo(
-    () => liveFeed.filter((b) => b.status === 'requested' && !declined.has(b.id)),
-    [liveFeed, declined]
+    () =>
+      liveFeed.filter(
+        (b) => b.status === 'requested' && b.workerId === workerId && !declined.has(b.id)
+      ),
+    [liveFeed, declined, workerId]
   );
   const today = myBookings.filter((b) => ['confirmed', 'inProgress'].includes(b.status));
   const completed = myBookings.filter((b) => b.status === 'completed');
