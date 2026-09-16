@@ -78,12 +78,45 @@ export default function WorkerChat() {
     ...emergencyThreads,
   ];
 
+  // Demo fallback (Expo Go, no backend needed): give THIS worker one lively
+  // "Ojas" conversation so the tab is never an empty state. Real booked
+  // threads above always win; this only fills an otherwise-empty list.
+  const DEMO_CUSTOMER_ID = 'demo_customer'; // local-only; never matched by Supabase
+  useEffect(() => {
+    if (!user?.id || threads.length > 0) return;
+    const chat = useChatStore.getState();
+    const key = chatKey(DEMO_CUSTOMER_ID, user.id);
+    if (chat.messagesByConv[key]?.length) return; // already seeded
+    const now = Date.now();
+    const lines = [
+      { text: `Hi ${user?.name}! I'm Ojas — I booked your ${t(`categories.${user?.service || 'repair'}`)} service. Are you available tomorrow morning?`, sender: DEMO_CUSTOMER_ID, name: 'Ojas', role: 'customer' },
+      { text: `Namaste Ojas! Yes, morning works for me. I'll be at FC Road around 10 AM.`, sender: user.id, name: user?.name || 'Worker', role: 'worker' },
+      { text: `Perfect, see you then. I also have a small electrical issue in the kitchen if you can check it. 🙏`, sender: DEMO_CUSTOMER_ID, name: 'Ojas', role: 'customer' },
+      { text: `No problem, I'll look at both. Message me here if anything changes.`, sender: user.id, name: user?.name || 'Worker', role: 'worker' },
+    ];
+    chat.mergeRemoteMsgs(lines.map((m, i) => ({
+      id: `demo_${user.id}_${i}`,
+      customer_id: DEMO_CUSTOMER_ID,
+      worker_id: user.id,
+      sender_id: m.sender,
+      sender_name: m.name,
+      sender_role: m.role,
+      text: m.text,
+      created_at: new Date(now - (lines.length - i) * 60_000).toISOString(),
+    })));
+  }, [user?.id, user?.name, user?.service, threads.length]);
+
+  // After seeding, show the demo thread when there are no real threads yet.
+  const displayThreads = threads.length
+    ? threads
+    : [{ customerId: DEMO_CUSTOMER_ID, workerId, name: 'Ojas', emoji: '👩', threadKey: DEMO_CUSTOMER_ID }];
+
   useEffect(() => {
     useChatStore.getState().setCurrentUser({ id: user?.id, name: user?.name, role: 'worker' });
   }, [user?.id]);
 
   if (active) {
-    const pair = threads.find((th) => th.customerId === active.customerId && th.workerId === active.workerId);
+    const pair = displayThreads.find((th) => th.customerId === active.customerId && th.workerId === active.workerId);
     return (
       <ChatThread
         customerId={active.customerId}
@@ -100,11 +133,11 @@ export default function WorkerChat() {
       <View style={styles.header}>
         <Text style={[typography.h2, { color: colors.text }]}>{t('chat.title')}</Text>
       </View>
-      {threads.length === 0 ? (
+      {displayThreads.length === 0 ? (
         <EmptyState icon="chat-processing-outline" title={t('chat.empty')} note={t('chat.emptyNote')} />
       ) : (
         <FlatList
-          data={threads}
+          data={displayThreads}
           keyExtractor={(th) => chatKey(th.customerId, th.workerId)}
           contentContainerStyle={{ paddingBottom: 120 }}
           style={{ flex: 1 }}

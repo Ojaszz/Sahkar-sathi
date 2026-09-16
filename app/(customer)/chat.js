@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TextInput, Pressable, KeyboardAvoidin
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen, EmptyState, Avatar } from '../../src/components/ui';
 import { colors, radius, spacing, typography } from '../../src/theme';
-import { getWorker } from '../../src/data/workers';
+import { getWorker, WORKERS } from '../../src/data/workers';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { useChatStore, chatKey } from '../../src/store/chatStore';
@@ -23,21 +23,42 @@ export default function CustomerChat() {
   //
   // A booking's workerId is EITHER a seeded demo id (w1…w5, safe to
   // `getWorker()`) OR a registered worker's uid that only exists in
-  // workerDirectoryStore, OR null while the job is still unclaimed. getWorker()
-  // falls back to WORKERS[0] for anything unknown, so we resolve the correct
-  // profile here — and dedupe by the RAW booking workerId (uids AND demo ids),
-  // so the keyExtractor never sees two rows with the same id.
+  // workerDirectoryStore, OR null while the job is still unclaimed.
+  //
+  // CRITICAL: the FlatList key MUST be the raw booking workerId (unique by
+  // construction), never the resolved profile's id. Until the worker_profiles
+  // board has synced, an unknown uid resolves to the WORKERS[0] fallback (id
+  // 'w1') — two different uids would then produce TWO rows claiming the same
+  // key and the list throws. threadKey guarantees uniqueness no matter what.
   const bookedWorkers = useMemo(() => {
     const registeredWorkers = useWorkerDirectoryStore.getState().byId;
-    const seen = new Map();
+    const seen = new Map(); // raw booking workerId -> resolved worker
     for (const b of bookings) {
       if (b.customerId !== user?.id || !b.workerId) continue; // skips unclaimed requests
       if (seen.has(b.workerId)) continue;
-      const w = registeredWorkers[b.workerId] || getWorker(b.workerId);
-      if (w && w.id) seen.set(b.workerId, w);
+      const w = registeredWorkers[b.workerId] || getWorker(b.workerId) || {};
+      seen.set(b.workerId, { ...w, threadKey: b.workerId });
     }
     return [...seen.values()];
   }, [bookings, user?.id]);
+  // Re-render when newly-registered worker profiles land, so the WORKERS[0]
+  // fallback faces swap to the real profile live.
+  useWorkerDirectoryStore((s) => s.profiles);
+
+  // Seed local demo conversations so the chat tab looks alive in Expo Go,
+  // even before any bookings exist or Supabase tables have been created.
+  useEffect(() => {
+    if (user?.id && bookedWorkers.length === 0) {
+      useChatStore.getState().seedDemoThreads(user.id);
+    }
+  }, [user?.id, bookedWorkers.length]);
+
+  // After seeding (or with real bookings), build the visible thread list.
+  // Real booked threads always win; seeded demo threads fill the rest up to 5.
+  const threads = useMemo(() => {
+    if (bookedWorkers.length) return bookedWorkers;
+    return [...WORKERS.slice(0, 5).map((w) => ({ ...w, threadKey: w.id, demo: true }))];
+  }, [bookedWorkers]);
 
   if (active && user) {
     return (
@@ -55,20 +76,25 @@ export default function CustomerChat() {
       <View style={styles.header}>
         <Text style={[typography.h2, { color: colors.text }]}>{t('chat.title')}</Text>
       </View>
-      {bookedWorkers.length === 0 ? (
+      {threads.length === 0 ? (
         <EmptyState icon="chat-processing-outline" title={t('chat.empty')} note={t('chat.emptyNote')} />
       ) : (
         <FlatList
-          data={bookedWorkers}
-          keyExtractor={(w) => w.id}
+          data={threads}
+          keyExtractor={(w) => w.threadKey}
           contentContainerStyle={{ paddingBottom: 120 }}
           style={{ flex: 1 }}
           renderItem={({ item }) => {
-            const preview = msgs[chatKey(user?.id, item.id)]?.at(-1)?.text || t(`categories.${item.service}`);
+            // Messages live under the RAW workerId, so look them up by threadKey
+            // (not the resolved profile id — the two differ for registered workers
+            // whose profile hasn't synced yet).
+            const preview =
+              msgs[chatKey(user?.id, item.threadKey)]?.at(-1)?.text ||
+              t(`categories.${item.service || 'repair'}`);
             return (
               <Pressable
                 style={styles.thread}
-                onPress={() => useChatStore.getState().openConversation(user?.id, item.id)}
+                onPress={() => useChatStore.getState().openConversation(user?.id, item.threadKey)}
               >
                 <Avatar emoji={item.avatar} size={50} online={item.available} />
                 <View style={{ flex: 1 }}>
@@ -88,7 +114,9 @@ export default function CustomerChat() {
 
 function ChatThread({ customerId, workerId, user, onBack }) {
   const styles = makeStyles(colors);
-  const worker = getWorker(workerId);
+  // Prefer the live registered profile when this id is a worker-directory uid
+  // (subscription re-renders the header as the profile lands over the poll).
+  const worker = useWorkerDirectoryStore((s) => s.byId[workerId]) || getWorker(workerId);
   const messages = useChatStore((s) => s.messagesByConv[chatKey(customerId, workerId)]) || [];
   const [text, setText] = useState('');
 

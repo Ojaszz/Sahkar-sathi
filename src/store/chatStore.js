@@ -5,6 +5,7 @@
 // from bookings (already synced), so the chat tab needs no separate index.
 import { create } from 'zustand';
 import { supabase, newMessageId } from '../lib/supabase';
+import { WORKERS } from '../data/workers';
 
 // Deterministic key both sides use for a customer<->worker thread.
 export function chatKey(customerId, workerId) {
@@ -112,6 +113,54 @@ export const useChatStore = create((set, get) => ({
     } catch {
       /* best-effort */
     }
+  },
+
+  // Seed a handful of demo conversations so the chat tab looks alive in Expo Go
+  // before any bookings exist or Supabase tables are created.  Called once on
+  // mount; if real messages arrive later (via live poll) they merge over these.
+  seedDemoThreads(customerId) {
+    if (!customerId) return;
+    const next = { ...get().messagesByConv };
+    const now = Date.now();
+    const mini = [
+      {
+        workerId: WORKERS[0].id,
+        msgs: [
+          { text: `Namaste Ojas! 🙏 I've accepted your wiring job and I'm heading to your address. Message me here if anything changes.`, sender: WORKERS[0].id, name: WORKERS[0].name, role: 'worker' },
+          { text: `Thanks Vardhan, I'm at the flat. The main switchboard is on the left wall near the door.`, sender: customerId, name: 'Ojas', role: 'customer' },
+          { text: `Got it! Reaching in about 10 min. The switchboard model you sent me looks like it needs a 4-module panel — I'll bring one.`, sender: WORKERS[0].id, name: WORKERS[0].name, role: 'worker' },
+        ],
+      },
+      {
+        workerId: WORKERS[1].id,
+        msgs: [
+          { text: `Hi Ojas! I'm the plumber assigned to your bathroom fitting job. What exactly needs fixing?`, sender: WORKERS[1].id, name: WORKERS[1].name, role: 'worker' },
+          { text: `The tap in the kitchen is leaking and the bathroom flush isn't working.`, sender: customerId, name: 'Ojas', role: 'customer' },
+          { text: `Understood — I'll check both. Kitchen taps are usually a washer issue, quick fix. The flush may need a new valve. I'll confirm after inspecting.`, sender: WORKERS[1].id, name: WORKERS[1].name, role: 'worker' },
+        ],
+      },
+      {
+        workerId: WORKERS[4].id,
+        msgs: [
+          { text: `Hello! Your deep-cleaning request was received. When would you like me to come?`, sender: WORKERS[4].id, name: WORKERS[4].name, role: 'worker' },
+          { text: `Morning 10 AM would be great if possible.`, sender: customerId, name: 'Ojas', role: 'customer' },
+          { text: `Perfect, I'll be there at 10 AM sharp. I'll bring all the cleaning supplies. See you tomorrow! 🧹`, sender: WORKERS[4].id, name: WORKERS[4].name, role: 'worker' },
+        ],
+      },
+    ];
+    for (const { workerId, msgs } of mini) {
+      const key = chatKey(customerId, workerId);
+      if (next[key]?.length) continue; // don't overwrite real messages
+      next[key] = msgs.map((m, i) => ({
+        id: `demo_${workerId}_${i}`,
+        text: m.text,
+        senderId: m.sender,
+        senderName: m.name,
+        senderRole: m.role,
+        time: new Date(now - (msgs.length - i) * 60_000).toISOString(),
+      }));
+    }
+    set({ messagesByConv: next });
   },
 
   // Called by the sync engine on every poll with the rows that belong to this phone.
