@@ -80,6 +80,8 @@ export const useSyncStore = create((set, get) => ({
   connected: false,
   liveFeed: [], // mirror of the server table (worker phone feed consumes this)
   myDeviceId: null,
+  msgError: null, // last messages-table GET error (surfaced in the chat sync banner)
+  msgCount: null, // last messages rows matched for this phone
 
   async init() {
     if (get().mode !== 'live') return;
@@ -117,7 +119,7 @@ export const useSyncStore = create((set, get) => ({
     liveBus.cancel = null;
     liveBus.payment = null;
     liveBus.review = null;
-    set({ online: false, connected: false, liveFeed: [], myDeviceId: null });
+    set({ online: false, connected: false, liveFeed: [], myDeviceId: null, msgError: null, msgCount: null });
   },
 
   async poll() {
@@ -170,8 +172,11 @@ export const useSyncStore = create((set, get) => ({
           lastMsgSig = sig;
           useChatStore.getState().mergeRemoteMsgs(rows || []);
         }
+        set({ msgError: null, msgCount: (rows || []).length });
       }
-    } catch {}
+    } catch (e) {
+      set({ msgError: e.message });
+    }
 
     // Tag-along rows involving THIS phone (as junior or as mentor) — the "take me
     // along" request board. Best-effort; silently skipped until tag_alongs exists.

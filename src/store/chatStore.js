@@ -16,6 +16,7 @@ export const useChatStore = create((set, get) => ({
   currentUser: null, // { id, name, role } — who is typing on THIS phone
   messagesByConv: {}, // convKey -> [msg...] ascending by time
   active: null, // { customerId, workerId } — the thread currently on screen
+  sendError: null, // last Supabase insert error (shown in the sync status banner)
 
   setCurrentUser(user) {
     set({ currentUser: user });
@@ -54,9 +55,10 @@ export const useChatStore = create((set, get) => ({
     try {
       const rows = await supabase.insert('messages', msg);
       const row = rows && rows[0] ? rows[0] : null;
+      set({ sendError: null });
       if (row) get().mergeRemoteMsgs([msg]); // shallow re-merge to confirm
-    } catch {
-      /* stays local-only */
+    } catch (e) {
+      set({ sendError: e.message }); // surfaced in the chat sync banner
     }
   },
 

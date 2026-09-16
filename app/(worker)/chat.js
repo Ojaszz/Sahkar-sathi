@@ -20,6 +20,7 @@ import { useBookingStore } from '../../src/store/bookingStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { useChatStore, chatKey } from '../../src/store/chatStore';
 import { useTagAlongStore } from '../../src/store/tagAlongStore';
+import { useSyncStore } from '../../src/store/syncStore';
 import { t } from '../../src/i18n';
 import { useSettingsStore } from '../../src/store/settingsStore';
 
@@ -31,6 +32,9 @@ export default function WorkerChat() {
   const active = useChatStore((s) => s.active);
   const msgs = useChatStore((s) => s.messagesByConv);
   const tagRows = useTagAlongStore((s) => s.rows);
+  const sendError = useChatStore((s) => s.sendError);
+  const msgError = useSyncStore((s) => s.msgError);
+  const msgCount = useSyncStore((s) => s.msgCount);
 
   const workerId = user?.id || 'w1';
   const customers = [...new Map(
@@ -133,6 +137,18 @@ export default function WorkerChat() {
       <View style={styles.header}>
         <Text style={[typography.h2, { color: colors.text }]}>{t('chat.title')}</Text>
       </View>
+      {(sendError || msgError) && (
+        <View style={styles.syncBanner}>
+          <Text style={[typography.small, { color: '#fff' }]}>
+            ⚠ {sendError ? `Send: ${sendError}` : msgError}
+          </Text>
+        </View>
+      )}
+      {msgError === null && msgCount !== null && !sendError && (
+        <View style={[styles.syncBanner, { backgroundColor: colors.success }]}>
+          <Text style={[typography.small, { color: '#fff' }]}>● Sync live — {msgCount} messages</Text>
+        </View>
+      )}
       {displayThreads.length === 0 ? (
         <EmptyState icon="chat-processing-outline" title={t('chat.empty')} note={t('chat.emptyNote')} />
       ) : (
@@ -317,4 +333,12 @@ const makeStyles = (colors) => StyleSheet.create({
   inputBar: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm, padding: spacing.md, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border },
   input: { flex: 1, minHeight: 44, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.border, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: colors.background, fontSize: 15 },
   sendBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#2E7BB0', alignItems: 'center', justifyContent: 'center' },
+  syncBanner: {
+    backgroundColor: colors.danger || '#e74c3c',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    marginHorizontal: spacing.lg,
+    borderRadius: radius.md,
+    marginBottom: spacing.sm,
+  },
 });
