@@ -48,14 +48,30 @@ function mapRow(r) {
     issue: r.issue || '',
     amount: r.amount ?? 0,
     coopFee: r.coop_fee ?? 0,
-    date: (r.created_at || '').slice(0, 10),
-    time: 'ASAP',
+    date: r.date || (r.created_at || '').slice(0, 10),
+    time: r.time || 'ASAP',
     payment: r.payment || 'unpaid',
     paymentMethod: r.payment_method || null,
     rating: r.rating ?? null,
     reviewed: !!r.reviewed,
     isLive: true,
   };
+}
+
+// Optimistically patch a booking into liveFeed + bookingStore (merging partials),
+// so taps re-render immediately instead of waiting on the next poll / round-trip.
+function applyLocal(patch) {
+  const sync = useSyncStore.getState();
+  const feed = sync.liveFeed.find((x) => x.id === patch.id);
+  const book = useBookingStore.getState().getById(patch.id);
+  const base = feed || book;
+  if (!base) return null;
+  const merged = { ...base, ...patch };
+  useSyncStore.setState({
+    liveFeed: sync.liveFeed.map((x) => (x.id === patch.id ? merged : x)),
+  });
+  useBookingStore.getState().mergeRemote(merged);
+  return merged;
 }
 
 export const useSyncStore = create((set, get) => ({
@@ -230,6 +246,8 @@ export const useSyncStore = create((set, get) => ({
       issue: payload.issue || '',
       amount,
       coop_fee: Math.round(amount * (COOP_FEE_PERCENT / 100)),
+      date: payload.date, // customer's chosen slot survives the round-trip now
+      time: payload.time,
       lat,
       lng,
     });
@@ -240,6 +258,9 @@ export const useSyncStore = create((set, get) => ({
 
   // Worker phone claims an open request. (Non-atomic for 3 humans — the first tap wins.)
   async acceptBooking(bookingId, workerId, workerName) {
+    // Optimistic: flip the card to 'confirmed' THIS tap, before the round-trip,
+    // so the worker never watches a spinner through a poll cycle.
+    const opt = applyLocal({ id: bookingId, status: 'confirmed', workerId, workerName });
     try {
       const rows = await supabase.patch(
         'bookings',
@@ -247,18 +268,21 @@ export const useSyncStore = create((set, get) => ({
         { worker_id: workerId, worker_name: workerName, status: 'confirmed' }
       );
       const b = rows && rows[0] ? mapRow(rows[0]) : null;
-      if (b) {
-        set({ liveFeed: get().liveFeed.map((x) => (x.id === b.id ? b : x)) });
-        useBookingStore.getState().mergeRemote(b);
+      if (b) applyLocal(b);
+      if (!b && opt) {
+        // Lost the race — another worker got there first. Revert to live reality.
+        applyLocal({ id: bookingId, status: 'requested', workerId: null, workerName: '' });
       }
       return { ok: !!b, booking: b };
     } catch (e) {
+      if (opt) applyLocal(opt);
       return { ok: false, error: e.message };
     }
   },
 
   async setStatus(bookingId, status) {
     if (get().mode !== 'live') return;
+    const opt = applyLocal({ id: bookingId, status });
     try {
       const rows = await supabase.patch(
         'bookings',
@@ -266,9 +290,10 @@ export const useSyncStore = create((set, get) => ({
         { status }
       );
       const b = rows && rows[0] ? mapRow(rows[0]) : null;
-      if (b) {
-        set({ liveFeed: get().liveFeed.map((x) => (x.id === b.id ? b : x)) });
-        useBookingStore.getState().mergeRemote(b);
+      if (b) applyLocal(b);
+      if (!b && opt && status === 'inProgress') {
+        // PATCH failed (e.g. offline blip) — don't leave the UI stuck on 'inProgress'.
+        applyLocal({ id: bookingId, status: 'confirmed' });
       }
       // Mentor completed a job → attach the oldest accepted tag-along pair to it,
       // so the junior's shared rating can land when the customer rates.

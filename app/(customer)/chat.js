@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen, EmptyState, Avatar } from '../../src/components/ui';
@@ -7,6 +7,7 @@ import { getWorker } from '../../src/data/workers';
 import { useBookingStore } from '../../src/store/bookingStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { useChatStore, chatKey } from '../../src/store/chatStore';
+import { useWorkerDirectoryStore } from '../../src/store/workerDirectoryStore';
 import { t } from '../../src/i18n';
 import { useSettingsStore } from '../../src/store/settingsStore';
 
@@ -18,10 +19,25 @@ export default function CustomerChat() {
   const active = useChatStore((s) => s.active);
   const msgs = useChatStore((s) => s.messagesByConv);
 
-  // Build a list of distinct workers you have booked
-  const bookedWorkers = [...new Map(
-    bookings.filter((b) => b.customerId === user?.id).map((b) => [b.workerId, getWorker(b.workerId)])
-  ).values()];
+  // Build a list of distinct workers you have booked (thread list).
+  //
+  // A booking's workerId is EITHER a seeded demo id (w1…w5, safe to
+  // `getWorker()`) OR a registered worker's uid that only exists in
+  // workerDirectoryStore, OR null while the job is still unclaimed. getWorker()
+  // falls back to WORKERS[0] for anything unknown, so we resolve the correct
+  // profile here — and dedupe by the RAW booking workerId (uids AND demo ids),
+  // so the keyExtractor never sees two rows with the same id.
+  const bookedWorkers = useMemo(() => {
+    const registeredWorkers = useWorkerDirectoryStore.getState().byId;
+    const seen = new Map();
+    for (const b of bookings) {
+      if (b.customerId !== user?.id || !b.workerId) continue; // skips unclaimed requests
+      if (seen.has(b.workerId)) continue;
+      const w = registeredWorkers[b.workerId] || getWorker(b.workerId);
+      if (w && w.id) seen.set(b.workerId, w);
+    }
+    return [...seen.values()];
+  }, [bookings, user?.id]);
 
   if (active && user) {
     return (

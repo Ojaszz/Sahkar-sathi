@@ -22,6 +22,11 @@ create table if not exists bookings (
   created_at    timestamptz not null default now()
 );
 
+-- date / time are the customer's chosen slot (added for the live demo). They are
+-- optional so older rows keep working; the app fills them on every new booking.
+alter table bookings add column if not exists date text;
+alter table bookings add column if not exists time text;
+
 -- Row Level Security: wide open to anon (same pattern as messages / tag_alongs).
 -- Demo-grade — 4 phones + anon key must work without auth complexity.
 alter table bookings enable row level security;

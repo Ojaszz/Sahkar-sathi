@@ -24,7 +24,13 @@ export default function NewBookingScreen() {
   const service = getService(worker.service);
   const user = useAuthStore((s) => s.user);
 
-  const [date, setDate] = useState('2026-09-07');
+  // Default slot = the first selectable day (tomorrow). Computed lazily so the
+  // demo always shows a highlighted, persisted date chip — never a stale one.
+  const [date, setDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+  });
   const [time, setTime] = useState('10:00 AM');
   const [issue, setIssue] = useState('');
   // Service address = area menu (+ auto pincode) + optional door/premise line.
