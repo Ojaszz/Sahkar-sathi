@@ -104,6 +104,8 @@ export default function RootLayout() {
             <Stack.Screen name="booking/[id]" />
             <Stack.Screen name="payment" options={{ presentation: 'modal' }} />
             <Stack.Screen name="notifications" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="addresses" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="help" options={{ presentation: 'modal' }} />
             <Stack.Screen name="demo-setup" options={{ presentation: 'modal' }} />
             <Stack.Screen name="worker-onboarding" options={{ presentation: 'modal' }} />
             <Stack.Screen name="emergency" options={{ presentation: 'fullScreenModal' }} />

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { formatINR } from '../../src/utils/format';
 import { TIME_SLOTS, USER_LOCATION } from '../../src/utils/constants';
 import { areaByKey } from '../../src/utils/puneAreas';
 import { useBookingStore } from '../../src/store/bookingStore';
+import { useAddressStore } from '../../src/store/addressStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { t } from '../../src/i18n';
 import { useSettingsStore } from '../../src/store/settingsStore';
@@ -39,6 +40,21 @@ export default function NewBookingScreen() {
   const [area, setArea] = useState('FC Road');
   const [door, setDoor] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Prefill from the default SAVED address (Profile → Saved addresses), so the
+  // same door/area don't have to be re-typed for the next booking.
+  useEffect(() => {
+    let mounted = true;
+    useAddressStore.getState().restore().then(() => {
+      if (!mounted) return;
+      const def = useAddressStore.getState().defaultAddress();
+      if (def?.area) setArea(def.area);
+      if (def?.door) setDoor(def.door);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Keep the old `address` shape (full line) derived so nothing downstream changes.
   const address = useMemo(

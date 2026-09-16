@@ -62,6 +62,8 @@ export function ProfileMenu({ user }) {
           <MenuItem icon="sync" label={t('profile.switchRole')} note={t('profile.switchRoleNote')} onPress={() => switchRole(user?.role === 'customer' ? 'worker' : 'customer')} />
         ) : null}
         <MenuItem icon="alert-decagram" label={t('profile.emergency')} onPress={() => router.push('/emergency')} />
+        <MenuItem icon="map-marker-outline" label={t('profile.savedAddresses')} note={t('profile.homeAddrNote')} onPress={() => router.push('/addresses')} />
+        <MenuItem icon="help-circle-outline" label={t('profile.help')} onPress={() => router.push('/help')} />
         {user?.role === 'worker' ? (
           <MenuItem icon="shield-check-outline" label={t('profile.insurance')} onPress={() => router.push('/(worker)/profile')} />
         ) : null}

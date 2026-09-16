@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Screen, Badge } from '../../src/components/ui';
 import Avatar from '../../src/components/ui/Avatar';
-import { ProfileMenu, MenuGroup, MenuItem } from '../../src/components/profile/SettingsPanel';
+import { ProfileMenu } from '../../src/components/profile/SettingsPanel';
 import { colors, spacing, typography } from '../../src/theme';
 import { useAuthStore } from '../../src/store/authStore';
 import { t } from '../../src/i18n';
@@ -39,12 +39,6 @@ export default function CustomerProfile() {
         <StatBox value={completed} label={t('profile.completedBookings')} icon="check-decagram" />
         <StatBox value={myBookings.filter((b) => b.status === 'inProgress').length} label={t('profile.activeBookings')} icon="progress-wrench" />
       </View>
-
-      {/* Addresses (demo) */}
-      <MenuGroup>
-        <MenuItem icon="map-marker-outline" label={t('profile.savedAddresses')} note={t('profile.homeAddrNote')} onPress={() => null} />
-        <MenuItem icon="help-circle-outline" label={t('profile.help')} onPress={() => null} />
-      </MenuGroup>
 
       <ProfileMenu user={user} />
     </Screen>

@@ -524,5 +524,50 @@
     "boardChecking": "Checking",
     "boardConnected": "✓ Board connected — data will sync over your network",
     "boardFailed": "✗ Could not reach this board"
+  },
+  "addresses": {
+    "title": "Saved addresses",
+    "hint": "Saved on this phone — your default address is pre-filled when you book.",
+    "empty": "No saved addresses yet",
+    "emptyNote": "Add your home or work address and it will be pre-filled when you book.",
+    "add": "Add address",
+    "labelName": "Address label",
+    "labelPlaceholder": "e.g. Home, Office",
+    "doorLabel": "Door / building (optional)",
+    "doorPlaceholder": "e.g. Flat 302, Sundar Society",
+    "save": "Save address",
+    "default": "Default",
+    "usedInBooking": "Used to pre-fill your booking address",
+    "tapToDefault": "Tap the star to make this your default",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this address:",
+    "needArea": "Choose an area",
+    "needAreaNote": "Please pick an area from the list to save the address."
+  },
+  "help": {
+    "title": "Help & support",
+    "subtitle": "We're all members here — how can we help?",
+    "quickPath": "Need us fast?",
+    "quickPathNote": "For an emergency, tap SOS on the home screen — every available worker is alerted instantly.",
+    "faqTitle": "Frequently asked questions",
+    "faq": {
+      "booking": { "q": "How do I book a service?", "a": "From the home screen, tap a category or search for a worker. Pick a date, time and duration (hours), review the price, then confirm. The worker accepts, and the job starts as Ongoing with live tracking." },
+      "cancel": { "q": "Can I cancel a booking?", "a": "Yes. Before a worker starts, you can cancel from the booking details screen. If you need help cancelling, message the worker or talk to support." },
+      "payment": { "q": "How does payment work?", "a": "You pay the agreed hourly rate after the job. An 8% cooperative fee on top goes to worker insurance and welfare — not platform profit." },
+      "reschedule": { "q": "Can I reschedule?", "a": "Yes — message the worker in the chat thread and agree on a new time together. You can update the slot before the worker starts." },
+      "emergency": { "q": "What happens if I press SOS?", "a": "Your location and emergency are broadcast to every available worker on the board. The first worker to respond is alerted with a ringing call overlay and heads to you." },
+      "membership": { "q": "What does it mean to be a member?", "a": "Sahkar Sathi is member-owned. Every booking supports the worker's cooperative — fair wages, insurance and welfare, so helpers aren't just gig workers." }
+    },
+    "contactTitle": "Talk to someone",
+    "call": "Call cooperative support",
+    "callNote": "+91 98765 43210 · Mon–Sat, 9am–7pm",
+    "demoCallNote": "This is a demo build — the real cooperative support line would ring here.",
+    "whatsapp": "WhatsApp us",
+    "whatsappNote": "Fast replies on WhatsApp",
+    "email": "Email the cooperative",
+    "emailNote": "sathi@coopsathi.example",
+    "askWorker": "Ask your worker in chat",
+    "askWorkerNote": "For anything about a current booking",
+    "responseNote": "We usually reply within a few minutes during the demo."
   }
 }
